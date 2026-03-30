@@ -1826,6 +1826,7 @@ let selectedGender = null;
 let debugMode = false;
 let warehouseDefaultSet = false;
 let currentSort = 'default';
+let preferredWarehouse = 'Seattle';  // User's warehouse preference from browse page
 
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
@@ -1955,7 +1956,12 @@ function showBrowseResults(data) {
   const selStyle = 'padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff;';
 
   let html = `<div class="status-bar">${data.message || 'Found ' + data.products.length + ' products'}</div>`;
+  const warehouseOptions = ['Seattle', 'Reno', 'Dallas', 'Cincinnati', 'Orlando', 'Kansas City', 'Pittsburgh', 'Jacksonville', 'Minneapolis', 'Phoenix'];
+
   html += `<div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <select id="browseWarehouseFilter" onchange="setPreferredWarehouse(this.value)" style="${selStyle};border-color:#2563eb;font-weight:600;">
+      ${warehouseOptions.map(w => '<option value="' + w + '"' + (w === preferredWarehouse ? ' selected' : '') + '>' + (w === preferredWarehouse ? '\u2713 ' : '') + w + '</option>').join('')}
+    </select>
     <select id="browseGenderFilter" onchange="sortBrowseResults()" style="${selStyle}">
       <option value="all">All Genders</option>
       <option value="Men">Men</option>
@@ -2080,6 +2086,13 @@ function sortBrowseResults() {
   grid.innerHTML = html;
 }
 
+function setPreferredWarehouse(wh) {
+  preferredWarehouse = wh;
+  // Reset warehouse default so next product detail uses new preference
+  warehouseDefaultSet = false;
+  toast('Warehouse preference: ' + wh);
+}
+
 function renderProducts() {
   const content = document.getElementById('content');
   const sidebar = document.getElementById('sidebar');
@@ -2113,13 +2126,14 @@ function renderProducts() {
   });
 
   if (!warehouseDefaultSet) {
-    // First load: default to only Seattle
+    // Use preferredWarehouse from browse page dropdown, fall back to DEFAULT_WAREHOUSES
+    const prefList = preferredWarehouse ? [preferredWarehouse] : DEFAULT_WAREHOUSES;
     selectedWarehouses.clear();
     for (const wh of allWarehouses) {
-      const isDef = DEFAULT_WAREHOUSES.some(f => wh.toLowerCase().includes(f.toLowerCase()));
+      const isDef = prefList.some(f => wh.toLowerCase().includes(f.toLowerCase()));
       if (isDef) selectedWarehouses.add(wh);
     }
-    // If no favorites matched, select all as fallback
+    // If no match found, select all as fallback
     if (selectedWarehouses.size === 0) {
       allWarehouses.forEach(w => selectedWarehouses.add(w));
     }
