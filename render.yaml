@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sanmar-search
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 sanmar_search:app
+    envVars:
+      - key: SANMAR_USERNAME
+        sync: false
+      - key: SANMAR_PASSWORD
+        sync: false
+      - key: SANMAR_CUSTOMER_ID
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.6
