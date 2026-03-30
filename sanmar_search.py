@@ -1747,11 +1747,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-icon">S</div>
-      <div>
-        SanMar Search
-        <small>Warehouse Inventory Edition</small>
-      </div>
+      <a href="https://www.4zdesign.com" target="_blank" rel="noopener" title="4Z Design - Marketing &amp; Printing" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 405 430" width="38" height="38" style="flex-shrink:0;">
+          <path fill="#fe7a16" d="M221.8,387.7c21.6,0,42.2-4.4,60.9-12.3h52c-31.1,24.4-70.3,39-113,39-101.1,0-183-81.9-183-183s0-3,0-4.5h26.7c0,1.5,0,3,0,4.5,0,86.3,70,156.3,156.3,156.3h0ZM38.7,208.7h120.3v88.7l42-43.1v-45.6h79.9l-123.6,127.2,15.1,21.3h182.2c31.1-32.8,50.2-77.1,50.2-125.9,0-101.1-81.9-183-183-183s-1.8,0-2.7,0v26.7c.9,0,1.8,0,2.7,0,86.3,0,156.3,70,156.3,156.3s-9.7,61.9-26.3,86.7h-113.7l106.9-109.4v-39.2h-144.1V48.6h-42l-120.3,120.9v39.2h0ZM159,102.1v67.4h-65.9l65.9-67.4h0Z"/>
+        </svg>
+        <div>
+          SanMar Search
+          <small>by 4Z Design</small>
+        </div>
+      </a>
     </div>
 
     <div class="search-box">
