@@ -38,6 +38,7 @@ _index_status = {
     'last_built': None,
 }
 _catalog = None  # In-memory catalog once loaded
+_product_cache = {}  # In-memory cache for full product fetches {productId: {data, timestamp}}
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 # Credentials from environment variables (with fallbacks for local dev)
@@ -928,43 +929,20 @@ def api_search():
     # 2) Search the local catalog if it exists (has ALL products)
     catalog_results = search_catalog(query)
     if catalog_results is not None and len(catalog_results) > 0:
-        # Parse out any color terms from the query
         _, colors_found = parse_natural_query(query)
-
-        # Catalog results are lightweight — fetch full details for up to 50
-        # Return catalog matches as clickable cards (fast), user clicks to load full details
-        if len(catalog_results) > 50:
-            # Too many to fetch all at once — show as clickable list
-            return jsonify({
-                'products': [{'productId': r['productId'], 'productName': r.get('productName', ''),
-                              'productBrand': r.get('productBrand', ''), 'description': r.get('description', '')[:100],
-                              'basePrice': r.get('basePrice', ''), 'gender': r.get('gender', 'Unisex'),
-                              'colorNames': r.get('colorNames', [])}
-                             for r in catalog_results[:200]],
-                'totalMatches': len(catalog_results),
-                'searchType': 'catalog_browse',
-                'autoFilterColors': colors_found,
-                'message': f'Found {len(catalog_results)} products for "{query}". Click to load full details.'
-            })
-        else:
-            # Manageable number — fetch full details in parallel
-            style_list = [r['productId'] for r in catalog_results]
-            products = []
-            with ThreadPoolExecutor(max_workers=10) as executor:
-                futures = {executor.submit(fetch_product_full, sid): sid for sid in style_list}
-                for future in as_completed(futures):
-                    try:
-                        result = future.result()
-                        if result and not result.get('error'):
-                            products.append(result)
-                    except:
-                        pass
-            return jsonify({
-                'products': products,
-                'searchType': 'natural',
-                'autoFilterColors': colors_found,
-                'message': f'Found {len(products)} products for "{query}"'
-            })
+        # Always return lightweight browse cards — fast response, user clicks for full details
+        return jsonify({
+            'products': [{'productId': r['productId'], 'productName': r.get('productName', ''),
+                          'productBrand': r.get('productBrand', ''), 'description': r.get('description', '')[:100],
+                          'basePrice': r.get('basePrice', ''), 'gender': r.get('gender', 'Unisex'),
+                          'colorNames': r.get('colorNames', []),
+                          'categories': r.get('categories', [])}
+                         for r in catalog_results[:500]],
+            'totalMatches': len(catalog_results),
+            'searchType': 'catalog_browse',
+            'autoFilterColors': colors_found,
+            'message': f'Found {len(catalog_results)} products for "{query}". Click any product for full details.'
+        })
 
     # 3) No catalog — fall back to keyword mapping
     category_words, colors_found = parse_natural_query(query)
@@ -985,22 +963,15 @@ def api_search():
 
     if matched_styles:
         style_list = sorted(matched_styles)
-        products = []
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = {executor.submit(fetch_product_full, sid): sid for sid in style_list}
-            for future in as_completed(futures):
-                try:
-                    result = future.result()
-                    if result and not result.get('error'):
-                        products.append(result)
-                except:
-                    pass
-
+        # Return lightweight browse cards for keyword matches too
+        products = [{'productId': sid, 'productName': '', 'productBrand': '',
+                     'description': '', 'basePrice': '', 'gender': 'Unisex',
+                     'colorNames': [], 'categories': []} for sid in style_list]
         return jsonify({
             'products': products,
-            'searchType': 'natural',
+            'searchType': 'catalog_browse',
             'autoFilterColors': colors_found,
-            'message': f'Found {len(products)} products for "{query}" (using quick mapping — build catalog for full results)'
+            'message': f'Found {len(products)} products for "{query}" (build catalog for richer results)'
         })
 
     # 4) Fall back to searching sellable product IDs
@@ -1030,7 +1001,13 @@ def search_by_keyword(keyword):
 
 
 def fetch_product_full(product_id):
-    """Fetch complete product data: details + inventory + images + pricing, in parallel."""
+    """Fetch complete product data: details + inventory + images + pricing, in parallel.
+    Results are cached in memory for 10 minutes to speed up repeat lookups."""
+    # Check cache first (10 min TTL)
+    cached = _product_cache.get(product_id)
+    if cached and (time.time() - cached['timestamp']) < 600:
+        return cached['data']
+
     results = {}
 
     with ThreadPoolExecutor(max_workers=4) as executor:
@@ -1056,6 +1033,12 @@ def fetch_product_full(product_id):
         if pricing and not pricing.get('error') and pricing.get('basePrice'):
             product['basePrice'] = pricing['basePrice']
             product['priceTiers'] = pricing.get('priceTiers', [])
+        # Cache the result
+        _product_cache[product_id] = {'data': product, 'timestamp': time.time()}
+        # Keep cache from growing unbounded (max 500 products)
+        if len(_product_cache) > 500:
+            oldest = min(_product_cache, key=lambda k: _product_cache[k]['timestamp'])
+            del _product_cache[oldest]
     return product
 
 
@@ -1782,16 +1765,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   </div>
 
   <div class="header-inner" style="padding-top: 8px;">
-    <div class="quick-search">
-      <span style="font-size:12px;opacity:0.7;line-height:28px;">Quick:</span>
-      <span class="quick-chip" onclick="quickSearch('PC54')">PC54</span>
-      <span class="quick-chip" onclick="quickSearch('K500')">K500</span>
-      <span class="quick-chip" onclick="quickSearch('ST850')">ST850</span>
-      <span class="quick-chip" onclick="quickSearch('J317')">J317</span>
-      <span class="quick-chip" onclick="quickSearch('NF0A3LH5')">North Face</span>
-      <span class="quick-chip" onclick="quickSearch('C112')">C112</span>
-      <span class="quick-chip" onclick="quickSearch('DT6000')">DT6000</span>
-      <span class="quick-chip" onclick="quickSearch('5000')">Gildan 5000</span>
+    <div class="quick-search" id="recentSearches" style="display:none;">
+      <span style="font-size:12px;opacity:0.7;line-height:28px;">Recent:</span>
     </div>
   </div>
 </header>
@@ -1855,14 +1830,36 @@ let currentSort = 'default';
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 
+let recentSearches = [];
+
 function quickSearch(term) {
   searchInput.value = term;
   doSearch();
 }
 
+function addRecentSearch(term) {
+  if (!term) return;
+  recentSearches = recentSearches.filter(s => s.toLowerCase() !== term.toLowerCase());
+  recentSearches.unshift(term);
+  if (recentSearches.length > 10) recentSearches.pop();
+  renderRecentSearches();
+}
+
+function renderRecentSearches() {
+  const container = document.getElementById('recentSearches');
+  if (!container || recentSearches.length === 0) { if (container) container.style.display = 'none'; return; }
+  container.style.display = 'flex';
+  let html = '<span style="font-size:12px;opacity:0.7;line-height:28px;">Recent:</span>';
+  for (const s of recentSearches) {
+    html += `<span class="quick-chip" onclick="quickSearch('${s.replace(/'/g, "\\'")}')">${s}</span>`;
+  }
+  container.innerHTML = html;
+}
+
 async function doSearch() {
   const q = searchInput.value.trim();
   if (!q) return;
+  addRecentSearch(q);
 
   const btn = document.getElementById('searchBtn');
   btn.disabled = true;
@@ -1878,25 +1875,16 @@ async function doSearch() {
       return;
     }
 
-    if (data.searchType === 'keyword' || data.searchType === 'catalog_browse') {
-      showKeywordResults(data);
-    } else if (data.products && data.products.length > 0) {
+    if (data.searchType === 'style' && data.products && data.products.length === 1) {
+      // Single exact style match — show full product detail
       currentProducts = data.products;
-      // Reset filters for new search
-      selectedBrand = null;
-      selectedCategory = null;
-      selectedGender = null;
-      selectedSize = null;
-      currentSort = 'default';
-      // Auto-apply color filter from natural language search
-      if (data.autoFilterColors && data.autoFilterColors.length > 0) {
-        selectedColor = data.autoFilterColors[0];
-        toast(`Filtering by color: ${selectedColor}`);
-      } else {
-        selectedColor = null;
-      }
-      warehouseDefaultSet = false; // Reset so defaults apply fresh
+      selectedBrand = null; selectedCategory = null; selectedGender = null;
+      selectedSize = null; selectedColor = null; currentSort = 'default';
+      warehouseDefaultSet = false;
       renderProducts();
+    } else if (data.products && data.products.length > 0) {
+      // All other results — unified browse view
+      showBrowseResults(data);
     } else {
       showEmpty('No products found for "' + q + '"');
     }
@@ -1950,64 +1938,64 @@ function showError(msg) {
   `;
 }
 
-function showKeywordResults(data) {
+function showBrowseResults(data) {
   const sidebar = document.getElementById('sidebar');
   sidebar.style.display = 'none';
 
-  let html = `<div class="status-bar">${data.message || `Found ${data.products.length} products`}</div>`;
-
-  if (data.searchType === 'catalog_browse') {
-    // Sort and filter controls for browse
-    html += `<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
-      <label style="font-size:13px;color:var(--text-light);">Sort:</label>
-      <select id="browseSortSelect" onchange="sortBrowseResults()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
-        <option value="default">Default</option>
-        <option value="price_asc">Price: Low to High</option>
-        <option value="price_desc">Price: High to Low</option>
-        <option value="name_asc">Name: A-Z</option>
-        <option value="brand_asc">Brand: A-Z</option>
-      </select>
-      <label style="font-size:13px;color:var(--text-light);margin-left:12px;">Price:</label>
-      <select id="browsePriceFilter" onchange="sortBrowseResults()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
-        <option value="all">All Prices</option>
-        <option value="0-5">Under $5</option>
-        <option value="5-10">$5 - $10</option>
-        <option value="10-20">$10 - $20</option>
-        <option value="20-50">$20 - $50</option>
-        <option value="50-999">$50+</option>
-      </select>
-      <label style="font-size:13px;color:var(--text-light);margin-left:12px;">Brand:</label>
-      <select id="browseBrandFilter" onchange="sortBrowseResults()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
-        <option value="all">All Brands</option>
-      </select>
-      <label style="font-size:13px;color:var(--text-light);margin-left:12px;">Gender:</label>
-      <select id="browseGenderFilter" onchange="sortBrowseResults()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
-        <option value="all">All</option>
-        <option value="Men">Men</option>
-        <option value="Women">Women</option>
-        <option value="Youth">Youth</option>
-        <option value="Unisex">Unisex</option>
-      </select>
-    </div>`;
-    html += '<div class="keyword-results" id="browseGrid"></div>';
-    // Store browse data globally for re-sorting
-    window._browseData = data.products;
-    document.getElementById('content').innerHTML = html;
-    // Populate brand dropdown
-    const brands = [...new Set(data.products.map(p => p.productBrand).filter(Boolean))].sort();
-    const brandSel = document.getElementById('browseBrandFilter');
-    for (const b of brands) {
-      brandSel.innerHTML += `<option value="${b}">${b}</option>`;
-    }
-    sortBrowseResults();
-  } else {
-    html += '<div class="keyword-results">';
-    for (const p of data.products) {
-      html += `<div class="keyword-result-card" onclick="loadProduct('${p.productId}')">${p.productId}</div>`;
-    }
-    html += '</div>';
-    document.getElementById('content').innerHTML = html;
+  // Auto-apply color filter from natural language search
+  if (data.autoFilterColors && data.autoFilterColors.length > 0) {
+    toast(`Filtering by color: ${data.autoFilterColors[0]}`);
   }
+
+  // Build filter options from data
+  const allBrands = [...new Set(data.products.map(p => p.productBrand).filter(Boolean))].sort();
+  const allCategories = [...new Set(data.products.flatMap(p => p.categories || []).filter(Boolean))].sort();
+  const allColors = [...new Set(data.products.flatMap(p => p.colorNames || []).filter(Boolean))].sort();
+
+  const selStyle = 'padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff;';
+
+  let html = `<div class="status-bar">${data.message || 'Found ' + data.products.length + ' products'}</div>`;
+  html += `<div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <select id="browseGenderFilter" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="all">All Genders</option>
+      <option value="Men">Men</option>
+      <option value="Women">Women</option>
+      <option value="Youth">Youth</option>
+      <option value="Unisex">Unisex Only</option>
+    </select>
+    <select id="browseColorFilter" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="all">All Colors</option>
+      ${allColors.map(c => '<option value="' + c + '"' + (data.autoFilterColors && data.autoFilterColors[0] === c ? ' selected' : '') + '>' + c + '</option>').join('')}
+    </select>
+    <select id="browseBrandFilter" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="all">All Brands</option>
+      ${allBrands.map(b => '<option value="' + b.replace(/"/g, '&quot;') + '">' + b + '</option>').join('')}
+    </select>
+    <select id="browseCategoryFilter" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="all">All Categories</option>
+      ${allCategories.map(c => '<option value="' + c.replace(/"/g, '&quot;') + '">' + c + '</option>').join('')}
+    </select>
+    <select id="browsePriceFilter" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="all">All Prices</option>
+      <option value="0-5">Under $5</option>
+      <option value="5-10">$5 - $10</option>
+      <option value="10-20">$10 - $20</option>
+      <option value="20-50">$20 - $50</option>
+      <option value="50-999">$50+</option>
+    </select>
+    <select id="browseSortSelect" onchange="sortBrowseResults()" style="${selStyle}">
+      <option value="default">Sort: Default</option>
+      <option value="price_asc">Sort: Price Low-High</option>
+      <option value="price_desc">Sort: Price High-Low</option>
+      <option value="name_asc">Sort: Name A-Z</option>
+      <option value="brand_asc">Sort: Brand A-Z</option>
+    </select>
+  </div>`;
+  html += '<div class="keyword-results" id="browseGrid"></div>';
+
+  window._browseData = data.products;
+  document.getElementById('content').innerHTML = html;
+  sortBrowseResults();
 }
 
 function sortBrowseResults() {
@@ -2016,6 +2004,8 @@ function sortBrowseResults() {
   const priceVal = document.getElementById('browsePriceFilter')?.value || 'all';
   const brandVal = document.getElementById('browseBrandFilter')?.value || 'all';
   const genderVal = document.getElementById('browseGenderFilter')?.value || 'all';
+  const colorVal = document.getElementById('browseColorFilter')?.value || 'all';
+  const catVal = document.getElementById('browseCategoryFilter')?.value || 'all';
 
   // Filter by price range
   if (priceVal !== 'all') {
@@ -2042,6 +2032,17 @@ function sortBrowseResults() {
     });
   }
 
+  // Filter by color
+  if (colorVal !== 'all') {
+    const cl = colorVal.toLowerCase();
+    items = items.filter(p => (p.colorNames || []).some(c => c.toLowerCase() === cl));
+  }
+
+  // Filter by category
+  if (catVal !== 'all') {
+    items = items.filter(p => (p.categories || []).includes(catVal));
+  }
+
   // Sort
   if (sortVal === 'price_asc') {
     items.sort((a, b) => (parseFloat(a.basePrice) || 999) - (parseFloat(b.basePrice) || 999));
@@ -2053,9 +2054,12 @@ function sortBrowseResults() {
     items.sort((a, b) => (a.productBrand || '').localeCompare(b.productBrand || ''));
   }
 
-  // Render
+  // Render — show count
   const grid = document.getElementById('browseGrid');
   if (!grid) return;
+  const statusBar = document.querySelector('.status-bar');
+  if (statusBar) statusBar.textContent = items.length + ' products' + (items.length !== (window._browseData || []).length ? ' (filtered)' : '');
+
   let html = '';
   for (const p of items) {
     const name = p.productName || p.productId;
