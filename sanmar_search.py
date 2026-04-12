@@ -1536,6 +1536,38 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   .price-tier strong { color: var(--text); }
 
+  .add-quote-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 9px 18px;
+    background: linear-gradient(135deg, #e8701a, #d0611a);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .3px;
+    transition: all .2s;
+  }
+  .add-quote-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(232,112,26,.4); }
+  .add-quote-btn-sm {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 10px;
+    background: #e8701a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .add-quote-btn-sm:hover { background: #d0611a; }
+
   .color-swatches {
     display: flex;
     flex-wrap: wrap;
@@ -1740,6 +1772,198 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.error { background: var(--danger); }
+
+  /* ── Quote Builder Drawer ─────────────────────────────── */
+  .qt-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.45); z-index: 900;
+  }
+  .qt-overlay.open { display: block; }
+
+  .qt-drawer {
+    position: fixed; top: 0; right: -560px; width: 540px; max-width: 100vw;
+    height: 100vh; background: #eef0f4; z-index: 901;
+    box-shadow: -6px 0 32px rgba(0,0,0,.22);
+    transition: right .3s cubic-bezier(.4,0,.2,1);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .qt-drawer.open { right: 0; }
+
+  .qt-drawer-header {
+    background: #1a2744; color: #fff; padding: 0 20px;
+    height: 60px; display: flex; align-items: center;
+    justify-content: space-between; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .qt-drawer-title { font-size: 1rem; font-weight: 800; letter-spacing: -.3px; }
+  .qt-drawer-title span { color: #e8701a; }
+  .qt-drawer-actions { display: flex; gap: 8px; align-items: center; }
+  .qt-hdr-btn {
+    background: transparent; border: 1.5px solid rgba(255,255,255,.3);
+    color: #fff; padding: 5px 12px; border-radius: 7px; cursor: pointer;
+    font-size: .78rem; font-weight: 600; transition: all .2s;
+  }
+  .qt-hdr-btn:hover { background: rgba(255,255,255,.12); }
+  .qt-close-btn {
+    background: transparent; border: none; color: rgba(255,255,255,.6);
+    font-size: 1.4rem; cursor: pointer; line-height: 1;
+    padding: 4px 6px; border-radius: 6px; transition: all .2s;
+  }
+  .qt-close-btn:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+  .qt-body {
+    flex: 1; overflow-y: auto; padding: 20px 20px 60px;
+  }
+
+  .qt-card {
+    background: #fff; border-radius: 14px; padding: 22px;
+    margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  }
+  .qt-card-title {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: #94a3b8; margin-bottom: 14px;
+  }
+  .qt-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .qt-form-group { display: flex; flex-direction: column; }
+  .qt-form-group label { font-size: .78rem; font-weight: 700; color: #374151; margin-bottom: 5px; }
+  .qt-hint { font-size: .72rem; color: #94a3b8; margin-top: 3px; }
+
+  .qt-input {
+    border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 9px 12px;
+    font-size: .92rem; color: #1a2744; outline: none; width: 100%;
+    transition: border-color .2s, box-shadow .2s; background: #fff;
+    font-family: inherit; -moz-appearance: textfield;
+  }
+  .qt-input:focus { border-color: #e8701a; box-shadow: 0 0 0 3px rgba(232,112,26,.12); }
+  .qt-input::-webkit-inner-spin-button { opacity: .5; }
+
+  .qt-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qt-loc-panel {
+    border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px;
+    transition: all .2s; background: #f8fafc;
+  }
+  .qt-loc-panel.active-panel { background: #fff; border-color: #1a2744; }
+  .qt-loc-name {
+    font-size: .72rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; color: #94a3b8; margin-bottom: 10px; display: block;
+  }
+  .qt-loc-panel.active-panel .qt-loc-name { color: #1a2744; }
+  .qt-loc-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .qt-loc-pill {
+    border: 1.5px solid #e2e8f0; background: #fff; border-radius: 20px;
+    padding: 4px 10px; font-size: .72rem; font-weight: 700; color: #64748b;
+    cursor: pointer; transition: all .2s; white-space: nowrap;
+  }
+  .qt-loc-pill:hover { border-color: #1a2744; color: #1a2744; }
+  .qt-loc-pill.active-none { border-color: #94a3b8; background: #f1f5f9; color: #64748b; }
+  .qt-loc-pill.active-type { border-color: #e8701a; background: #fff8f3; color: #e8701a; }
+  .qt-loc-opts { margin-top: 4px; }
+  .qt-loc-opts label { font-size: .72rem; }
+  .qt-select {
+    border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 7px 10px;
+    font-size: .85rem; color: #1a2744; outline: none; width: 100%;
+    transition: border-color .2s; background: #fff; font-family: inherit;
+  }
+  .qt-select:focus { border-color: #e8701a; }
+
+  .qt-alert { border-radius: 8px; padding: 9px 14px; font-size: .8rem; margin-bottom: 12px; display: none; }
+  .qt-alert.warn { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+  .qt-alert.err  { background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+  .qt-alert.show { display: block; }
+
+  .qt-calc-btn {
+    background: linear-gradient(135deg, #e8701a, #d0611a); color: #fff;
+    border: none; border-radius: 10px; padding: 13px; font-size: .95rem;
+    font-weight: 800; cursor: pointer; width: 100%; letter-spacing: .4px;
+    transition: all .2s;
+  }
+  .qt-calc-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(232,112,26,.35); }
+
+  .qt-results-card {
+    background: linear-gradient(135deg, #1a2744, #0f1d3a); color: #fff;
+    border-radius: 14px; padding: 22px; margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(26,39,68,.3);
+  }
+  .qt-results-card .qt-card-title { color: rgba(255,255,255,.45); }
+  .qt-results-primary { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+  .qt-res-big { background: rgba(255,255,255,.08); border-radius: 10px; padding: 14px 10px; text-align: center; }
+  .qt-res-big .val { font-size: 1.5rem; font-weight: 800; color: #f5a623; line-height: 1; }
+  .qt-res-big .lbl { font-size: .68rem; color: rgba(255,255,255,.55); margin-top: 5px; text-transform: uppercase; letter-spacing: .7px; }
+  .qt-results-secondary { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .qt-res-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,.06); border-radius: 8px; padding: 9px 12px; }
+  .qt-res-row .rk { font-size: .76rem; color: rgba(255,255,255,.55); }
+  .qt-res-row .rv { font-size: .84rem; font-weight: 700; }
+  .qt-res-row.highlight .rv { color: #6ee7b7; }
+  .qt-res-row.span2 { grid-column: 1 / -1; }
+  .qt-loc-breakdown { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .qt-loc-line { display: flex; justify-content: space-between; padding: 7px 12px; background: rgba(255,255,255,.04); border-radius: 7px; font-size: .76rem; }
+  .qt-loc-line .lk { color: rgba(255,255,255,.5); }
+  .qt-loc-line .lv { font-weight: 600; }
+
+  .qt-quote-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .qt-quote-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .qt-btn-outline {
+    flex: 1; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 8px;
+    padding: 9px; font-size: .82rem; font-weight: 700; cursor: pointer;
+    color: #374151; transition: all .2s;
+  }
+  .qt-btn-outline:hover { border-color: #1a2744; color: #1a2744; }
+  .qt-btn-solid {
+    flex: 1; background: #1a2744; color: #fff; border: none;
+    border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+  }
+  .qt-btn-solid:hover { background: #243564; }
+  #qt-quote-preview {
+    width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px;
+    min-height: 300px; display: block; background: #fff;
+  }
+  .qt-copy-flash { font-size: .75rem; color: #059669; font-weight: 700; opacity: 0; transition: opacity .3s; }
+  .qt-copy-flash.show { opacity: 1; }
+
+  .qt-overlay-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
+    z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+  }
+  .qt-overlay-modal.open { display: flex; }
+  .qt-modal {
+    background: #fff; border-radius: 16px; padding: 24px; width: 100%;
+    max-width: 480px; max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  }
+  .qt-modal-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 5px; }
+  .qt-modal-sub { font-size: .82rem; color: #64748b; margin-bottom: 18px; }
+  .qt-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  #qt-edit-html-area {
+    width: 100%; min-height: 260px; border: 1.5px solid #e2e8f0;
+    border-radius: 9px; padding: 12px; font-size: .76rem;
+    font-family: 'Courier New', monospace; outline: none; resize: vertical;
+  }
+  #qt-edit-html-area:focus { border-color: #e8701a; }
+  .qt-quote-list { display: flex; flex-direction: column; gap: 8px; }
+  .qt-quote-item {
+    border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; transition: all .2s;
+  }
+  .qt-quote-item:hover { border-color: #1a2744; background: #f8fafc; }
+  .qt-qi-name { font-weight: 700; font-size: .88rem; }
+  .qt-qi-meta { font-size: .74rem; color: #94a3b8; margin-top: 2px; }
+  .qt-qi-del { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1rem; padding: 4px 8px; border-radius: 6px; }
+  .qt-qi-del:hover { background: #fee2e2; }
+  .qt-empty-state { text-align: center; color: #94a3b8; padding: 28px; font-size: .88rem; }
+
+  #qt-results-section { display: none; }
+
+  .quote-tool-fab {
+    position: fixed; bottom: 28px; right: 28px; z-index: 800;
+    background: linear-gradient(135deg, #e8701a, #d0611a);
+    color: #fff; border: none; border-radius: 50px;
+    padding: 13px 22px; font-size: .9rem; font-weight: 800;
+    cursor: pointer; box-shadow: 0 4px 18px rgba(232,112,26,.45);
+    transition: all .2s; display: flex; align-items: center; gap: 8px;
+  }
+  .quote-tool-fab:hover { transform: translateY(-2px); box-shadow: 0 7px 24px rgba(232,112,26,.55); }
 </style>
 </head>
 <body>
@@ -1766,6 +1990,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <span class="debug-toggle" onclick="buildCatalog()" title="Build full product catalog for keyword search" id="catalogBtn">&#128230; build catalog</span>
     <span class="debug-toggle" onclick="runHealthCheck()" title="Test API connectivity">&#9889; health check</span>
     <span class="debug-toggle" onclick="toggleDebug()">debug</span>
+    <span class="debug-toggle" onclick="qtOpen()" title="Open Quote Builder" style="color:#e8701a;font-weight:700;">&#128203; Quote Builder</span>
   </div>
 
   <div class="header-inner" style="padding-top: 8px;">
@@ -2075,6 +2300,9 @@ function sortBrowseResults() {
     const name = p.productName || p.productId;
     const brand = p.productBrand ? `<div style="font-size:11px;color:var(--text-light);margin-top:3px;">${p.productBrand}</div>` : '';
     const price = p.basePrice ? `<div style="font-size:14px;font-weight:700;color:#16a34a;margin-top:4px;">$${p.basePrice}</div>` : '';
+    const addBtn = p.basePrice
+      ? `<button class="add-quote-btn-sm" onclick="event.stopPropagation();addToQuote(${JSON.stringify(name)},${p.basePrice})">+ Quote</button>`
+      : '';
     html += `<div class="keyword-result-card" onclick="loadProduct('${p.productId}')" style="text-align:left;padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:start;">
         <div style="font-size:13px;font-weight:700;color:var(--primary);">${p.productId}</div>
@@ -2082,6 +2310,7 @@ function sortBrowseResults() {
       </div>
       <div style="font-size:12px;margin-top:2px;">${name}</div>
       ${brand}
+      ${addBtn}
     </div>`;
   }
   if (items.length === 0) {
@@ -2558,6 +2787,7 @@ function renderProductCard(prod) {
         <div class="product-desc">${prod.description || 'No description available.'}</div>
         ${prod.basePrice ? `<div class="price-block"><span class="price-main">$${prod.basePrice}</span><span class="price-label">per unit</span></div>` : ''}
         ${priceTiersHtml}
+        ${prod.basePrice ? `<button class="add-quote-btn" onclick="addToQuote(${JSON.stringify(prod.productName||prod.productId)},${prod.basePrice})">📋 Add to Quote</button>` : ''}
         ${swatchesHtml}
       </div>
     </div>
@@ -2717,7 +2947,487 @@ function toast(msg, isError) {
   el.className = 'toast show' + (isError ? ' error' : '');
   setTimeout(() => { el.className = 'toast'; }, 3000);
 }
+
+// ─── Quote Builder — Drawer open/close ───────────────────────────────────────
+function qtOpen() {
+  document.getElementById('qt-drawer').classList.add('open');
+  document.getElementById('qt-overlay').classList.add('open');
+}
+function qtClose() {
+  document.getElementById('qt-drawer').classList.remove('open');
+  document.getElementById('qt-overlay').classList.remove('open');
+}
+
+// ─── Quote Builder — addToQuote entry point ───────────────────────────────────
+function addToQuote(name, price) {
+  document.getElementById('qt-garment-desc').value  = name;
+  document.getElementById('qt-apparel-cost').value  = parseFloat(price).toFixed(2);
+  qtClearResults(); qtOnQtyChange();
+  qtOpen();
+  setTimeout(() => document.getElementById('qt-qty').focus(), 350);
+}
+
+// ─── Quote Builder — Pricing data ────────────────────────────────────────────
+const QT_IPU_RATE = 0.10;
+function qtGetMargin(qty) {
+  if (qty < 36)   return 1.00;
+  if (qty <= 60)  return 0.85;
+  if (qty <= 144) return 0.65;
+  if (qty <= 249) return 0.55;
+  return 0.40;
+}
+function qtMarginLabel(qty) { return (qtGetMargin(qty)*100).toFixed(0)+'%'; }
+
+const QT_HT_SIZES = [
+  '1.5\u2033 \xd7 1.5\u2033','2.5\u2033 \xd7 2.5\u2033','4\u2033 \xd7 4\u2033',
+  '5.8\u2033 \xd7 8.3\u2033','11.7\u2033 \xd7 4.25\u2033','16.5\u2033 \xd7 5.85\u2033',
+  '8.3\u2033 \xd7 11.7\u2033','11.7\u2033 \xd7 11.7\u2033','11.7\u2033 \xd7 16.5\u2033'
+];
+const QT_HT_TIERS = [
+  { from:10,  to:19,  prices:[2.62,2.95,3.23,4.28,4.28,5.12,5.12,6.43,7.74] },
+  { from:20,  to:49,  prices:[2.18,2.45,2.69,3.57,3.57,4.27,4.27,5.37,6.46] },
+  { from:50,  to:99,  prices:[1.30,1.62,1.96,2.56,2.56,3.30,3.30,4.24,5.20] },
+  { from:100, to:199, prices:[0.87,1.11,1.45,1.77,1.77,2.27,2.27,2.95,3.63] },
+  { from:200, to:299, prices:[0.70,0.93,1.26,1.49,1.49,1.86,1.86,2.43,3.02] },
+  { from:300, to:499, prices:[0.56,0.78,1.10,1.33,1.33,1.71,1.71,2.24,2.78] },
+];
+const QT_EMB_TIERS = [
+  { from:1,   to:5,   price:7.00 },
+  { from:6,   to:23,  price:5.50 },
+  { from:24,  to:35,  price:5.25 },
+  { from:36,  to:71,  price:4.75 },
+  { from:72,  to:143, price:4.25 },
+  { from:144, to:500, price:3.25 },
+];
+const QT_SP_TIERS = [
+  { from:12,  to:36,  factor:30, base:[2.85,2.95,3.10,3.30,3.50,3.65] },
+  { from:37,  to:60,  factor:30, base:[2.35,2.45,2.60,2.70,2.80,2.90] },
+  { from:61,  to:144, factor:30, base:[2.00,2.05,2.20,2.40,2.55,2.65] },
+  { from:145, to:249, factor:30, base:[1.80,1.90,2.05,2.15,2.35,2.55] },
+  { from:250, to:600, factor:34, base:[1.20,1.25,1.45,1.50,1.65,2.50] },
+];
+function qtHtPrice(qty, si)  { const t = QT_HT_TIERS.find(r => qty >= r.from && qty <= r.to); return t ? t.prices[si] : null; }
+function qtEmbPrice(qty)     { const t = QT_EMB_TIERS.find(r => qty >= r.from && qty <= r.to); return t ? t.price : null; }
+function qtSpPrice(qty, ci)  { const t = QT_SP_TIERS.find(r => qty >= r.from && qty <= r.to); if (!t) return null; return t.base[ci] + t.factor*(ci+1)/qty; }
+
+// ─── Quote Builder — Location panels ─────────────────────────────────────────
+const QT_LOC_KEYS   = ['front','back','rsleeve','lsleeve'];
+const QT_LOC_LABELS = { front:'Side 1 — Front', back:'Side 2 — Back', rsleeve:'Right Sleeve', lsleeve:'Left Sleeve' };
+const qtLocState    = { front:'none', back:'none', rsleeve:'none', lsleeve:'none' };
+
+const QT_HT_OPTS = QT_HT_SIZES.map((s,i) => `<option value="${i}">${s}</option>`).join('');
+const QT_SP_OPTS = [1,2,3,4,5,6].map((c,i) => `<option value="${i}">${c} Color${c>1?'s':''}</option>`).join('');
+
+function qtBuildPanel(key) {
+  return `
+  <div class="qt-loc-panel" id="qt-panel-${key}">
+    <span class="qt-loc-name">${QT_LOC_LABELS[key]}</span>
+    <div class="qt-loc-pills">
+      <button class="qt-loc-pill active-none" id="qt-pill-${key}-none"       onclick="qtSetLocType('${key}','none')">None</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-heat"       onclick="qtSetLocType('${key}','heat')">\uD83D\uDD25 Heat</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-embroidery" onclick="qtSetLocType('${key}','embroidery')">\uD83E\uDDF5 Emb</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-screen"     onclick="qtSetLocType('${key}','screen')">\uD83D\uDDA8\uFE0F Screen</button>
+    </div>
+    <div class="qt-loc-opts hidden" id="qt-opts-${key}-heat">
+      <div class="qt-form-group">
+        <label>Transfer Size</label>
+        <select class="qt-select" id="qt-${key}-ht-size" onchange="qtClearResults()">
+          <option value="">— Select size —</option>${QT_HT_OPTS}
+        </select>
+      </div>
+    </div>
+    <div class="qt-loc-opts hidden" id="qt-opts-${key}-screen">
+      <div class="qt-form-group">
+        <label>Number of Colors</label>
+        <select class="qt-select" id="qt-${key}-sp-colors" onchange="qtClearResults()">
+          <option value="">— Select —</option>${QT_SP_OPTS}
+        </select>
+        <div class="qt-hint">Setup cost split across qty.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('qt-loc-grid').innerHTML = QT_LOC_KEYS.map(qtBuildPanel).join('');
+
+function qtSetLocType(key, type) {
+  qtLocState[key] = type;
+  ['none','heat','embroidery','screen'].forEach(t => {
+    const pill = document.getElementById(`qt-pill-${key}-${t}`);
+    pill.classList.remove('active-none','active-type');
+    if (t === type) pill.classList.add(type === 'none' ? 'active-none' : 'active-type');
+  });
+  const panel = document.getElementById(`qt-panel-${key}`);
+  panel.classList.toggle('active-panel', type !== 'none');
+  ['heat','screen'].forEach(t => {
+    const el = document.getElementById(`qt-opts-${key}-${t}`);
+    if (el) el.classList.toggle('hidden', type !== t);
+  });
+  qtClearResults();
+}
+
+// ─── Quote Builder — Qty / margin ────────────────────────────────────────────
+function qtOnQtyChange() {
+  const qty  = parseInt(document.getElementById('qt-qty').value);
+  const hint = document.getElementById('qt-margin-hint');
+  hint.textContent = (!isNaN(qty) && qty > 0) ? 'Margin rate: ' + qtMarginLabel(qty) : '';
+  qtClearResults();
+}
+
+// ─── Quote Builder — Calculate ────────────────────────────────────────────────
+const qtFmt  = n => '$' + n.toFixed(2);
+const qtFmtK = n => n >= 1000 ? '$' + (n/1000).toFixed(1) + 'K' : '$' + n.toFixed(2);
+
+function qtShowAlert(type, msg) { const el = document.getElementById('qt-alert-'+type); el.textContent = msg; el.classList.add('show'); }
+function qtClearAlerts() { ['warn','err'].forEach(t => document.getElementById('qt-alert-'+t).classList.remove('show')); }
+function qtClearResults() { document.getElementById('qt-results-section').style.display = 'none'; }
+
+function qtCalculate() {
+  qtClearAlerts();
+  const apparelCost = parseFloat(document.getElementById('qt-apparel-cost').value);
+  const qty         = parseInt(document.getElementById('qt-qty').value);
+  const clientName  = document.getElementById('qt-client-name').value.trim() || '[Client Name]';
+  const garmentDesc = document.getElementById('qt-garment-desc').value.trim() || '[Garment]';
+
+  if (isNaN(apparelCost) || apparelCost < 0) { qtShowAlert('err','Enter a valid apparel cost.'); return; }
+  if (isNaN(qty) || qty < 1)                 { qtShowAlert('err','Enter a valid quantity.'); return; }
+
+  const active = [];
+  for (const key of QT_LOC_KEYS) {
+    const type = qtLocState[key];
+    if (type === 'none') continue;
+    let price = null, label = '';
+    if (type === 'heat') {
+      const val = document.getElementById(`qt-${key}-ht-size`).value;
+      if (val === '') { qtShowAlert('err', `Select a transfer size for ${QT_LOC_LABELS[key]}.`); return; }
+      const si = parseInt(val);
+      if (qty < 10 || qty > 499) { qtShowAlert('err', `Heat Transfer qty must be 10–499.`); return; }
+      price = qtHtPrice(qty, si);
+      if (price === null) { qtShowAlert('err', `No Heat Transfer pricing for qty ${qty}.`); return; }
+      label = `Heat Transfer — ${QT_HT_SIZES[si]}`;
+    } else if (type === 'embroidery') {
+      if (qty > 500) { qtShowAlert('err', `Embroidery max is 500.`); return; }
+      price = qtEmbPrice(qty);
+      if (price === null) { qtShowAlert('err', `No embroidery pricing for qty ${qty}.`); return; }
+      label = 'Embroidery (6,000 stitches)';
+    } else if (type === 'screen') {
+      const val = document.getElementById(`qt-${key}-sp-colors`).value;
+      if (val === '') { qtShowAlert('err', `Select number of colors for ${QT_LOC_LABELS[key]}.`); return; }
+      const ci = parseInt(val);
+      if (qty < 12 || qty > 600) { qtShowAlert('err', `Screen Printing qty must be 12–600.`); return; }
+      price = qtSpPrice(qty, ci);
+      if (price === null) { qtShowAlert('err', `No Screen Printing pricing for qty ${qty}.`); return; }
+      label = `Screen Printing — ${ci+1} color${ci>0?'s':''}`;
+    }
+    active.push({ key, locLabel: QT_LOC_LABELS[key], price, label });
+  }
+
+  if (active.length === 0) { qtShowAlert('err', 'Select at least one decoration location.'); return; }
+
+  const totalPrintCost = active.reduce((s, a) => s + a.price, 0);
+  const margin         = qtGetMargin(qty);
+  const subTotal       = totalPrintCost + apparelCost;
+  const totalUnit      = subTotal * (1 + margin);
+  const marginDollars  = (totalUnit - subTotal) * qty;
+  const ipuPerUnit     = totalUnit * QT_IPU_RATE;
+  const ipuTotal       = ipuPerUnit * qty;
+  const profit         = marginDollars - ipuTotal;
+  const totalOrder     = totalUnit * qty;
+
+  document.getElementById('qt-r-total-unit').textContent  = qtFmt(totalUnit);
+  document.getElementById('qt-r-total-order').textContent = qtFmtK(totalOrder);
+  document.getElementById('qt-r-profit').textContent      = qtFmtK(profit);
+  document.getElementById('qt-r-apparel').textContent     = qtFmt(apparelCost);
+  document.getElementById('qt-r-print-total').textContent = qtFmt(totalPrintCost);
+  document.getElementById('qt-r-subtotal').textContent    = qtFmt(subTotal);
+  document.getElementById('qt-r-margin-rate').textContent = qtMarginLabel(qty);
+  document.getElementById('qt-r-margin').textContent      = qtFmtK(marginDollars);
+  document.getElementById('qt-r-ipu-total').textContent   = qtFmtK(ipuTotal);
+  document.getElementById('qt-r-profit2').textContent     = qtFmtK(profit);
+
+  document.getElementById('qt-loc-breakdown').innerHTML = active.map(a =>
+    `<div class="qt-loc-line"><span class="lk">${a.locLabel}</span><span class="lv">${a.label} — ${qtFmt(a.price)}/unit</span></div>`
+  ).join('');
+
+  const result = { totalUnit, totalOrder, subTotal, marginDollars, ipuTotal, profit, qty, apparelCost, clientName, garmentDesc, active };
+  window._qtLastResult = result;
+  window._qtQuoteHtml  = qtBuildQuoteHtml(result);
+  qtRenderQuotePreview(window._qtQuoteHtml);
+  document.getElementById('qt-results-section').style.display = 'block';
+  setTimeout(() => document.getElementById('qt-results-section').scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+}
+
+// ─── Quote Builder — HTML quote generation ────────────────────────────────────
+function qtEscHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function qtBuildQuoteHtml(r) {
+  const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const decorRows = r.active.map(a =>
+    `<tr><td style="padding:3px 4px;color:#666666;width:175px;vertical-align:top;">&#8203;</td><td style="padding:3px 4px;font-size:13px;color:#555;">${qtEscHtml(a.locLabel)}: ${qtEscHtml(a.label)}</td></tr>`
+  ).join('');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:24px;font-family:Arial,Helvetica,sans-serif;color:#222;background:#fff;font-size:15px;line-height:1.6;">
+<div style="max-width:560px;margin:0 auto;">
+<p style="margin:0 0 16px">Hi ${qtEscHtml(r.clientName)},</p>
+<p style="margin:0 0 16px">Thanks for reaching out—here's a first pass on your quote:</p>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:2px solid #1a2744;border-bottom:2px solid #1a2744;margin:20px 0;">
+  <tr><td colspan="2" style="padding:14px 4px 10px;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1a2744;">QUOTE SUMMARY</td></tr>
+  <tr><td style="padding:5px 4px;color:#666;width:175px;">Garment:</td><td style="padding:5px 4px;font-weight:600;">${qtEscHtml(r.garmentDesc)}</td></tr>
+  <tr><td style="padding:5px 4px;color:#666;vertical-align:top;">Decoration:</td><td style="padding:5px 4px;font-weight:600;">${r.active.length===1?qtEscHtml(r.active[0].label):''}</td></tr>
+  ${r.active.length>1?decorRows:''}
+  <tr><td style="padding:5px 4px;color:#666;">Quantity:</td><td style="padding:5px 4px;font-weight:600;">${r.qty} pieces</td></tr>
+  <tr><td style="padding:5px 4px;color:#666;">Price per garment:</td><td style="padding:5px 4px;font-weight:600;">${qtFmt(r.totalUnit)}</td></tr>
+  <tr><td style="padding:14px 4px 10px;color:#444;font-size:15px;">Total:</td><td style="padding:14px 4px 10px;font-weight:700;font-size:20px;color:#e8701a;">${qtFmt(r.totalOrder)}</td></tr>
+</table>
+<p style="margin:0 0 14px;color:#444;">This includes the decoration and is based on the quantity above.</p>
+<p style="margin:0 0 14px;color:#444;">Shipping and sales tax are not included and will be added once we finalize details.</p>
+<p style="margin:0 0 24px;color:#444;">If you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.</p>
+<p style="margin:0;color:#222;line-height:1.9;">— Marc<br><strong>4Z Design</strong><br>
+<a href="mailto:marc@4zdesign.com" style="color:#e8701a;text-decoration:none;">marc@4zdesign.com</a></p>
+</div></body></html>`;
+}
+
+function qtRenderQuotePreview(html) {
+  const iframe = document.getElementById('qt-quote-preview');
+  iframe.srcdoc = html;
+  iframe.onload = () => { try { iframe.style.height = (iframe.contentDocument.body.scrollHeight + 32) + 'px'; } catch(e){} };
+}
+
+// ─── Quote Builder — Copy / Edit ─────────────────────────────────────────────
+function qtFlash() { const f = document.getElementById('qt-copy-flash'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2000); }
+function qtCopyHtml()       { navigator.clipboard.writeText(window._qtQuoteHtml||'').then(qtFlash); }
+function qtCopyPlainText() {
+  const r = window._qtLastResult; if (!r) return;
+  const text = `Hi ${r.clientName},\n\nThanks for reaching out—here's a first pass on your quote:\n\n──────────────────────────────\nQUOTE SUMMARY\n──────────────────────────────\nGarment:           ${r.garmentDesc}\nDecoration:\n${r.active.map(a=>'  '+a.locLabel+': '+a.label).join('\n')}\nQuantity:          ${r.qty} pieces\nPrice per garment: ${qtFmt(r.totalUnit)}\nTotal:             ${qtFmt(r.totalOrder)}\n──────────────────────────────\n\nThis includes the decoration and is based on the quantity above.\n\nShipping and sales tax are not included and will be added once we finalize details.\n\nIf you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.\n\n— Marc\n4Z Design\nmarc@4zdesign.com`;
+  navigator.clipboard.writeText(text).then(qtFlash);
+}
+function qtOpenEditModal()  { document.getElementById('qt-edit-html-area').value = window._qtQuoteHtml||''; document.getElementById('qt-edit-modal').classList.add('open'); }
+function qtApplyEditedHtml(){ window._qtQuoteHtml = document.getElementById('qt-edit-html-area').value; qtRenderQuotePreview(window._qtQuoteHtml); qtCloseModal('qt-edit-modal'); }
+
+// ─── Quote Builder — Reset ────────────────────────────────────────────────────
+function qtResetAll() {
+  QT_LOC_KEYS.forEach(k => qtSetLocType(k,'none'));
+  ['qt-apparel-cost','qt-qty','qt-client-name','qt-garment-desc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('qt-margin-hint').textContent = '';
+  qtClearResults(); qtClearAlerts();
+  window._qtLastResult = null; window._qtQuoteHtml = '';
+}
+
+// ─── Quote Builder — Save / Load ─────────────────────────────────────────────
+const QT_STORAGE_KEY = '4zd_quotes_v3';
+const qtLoadAll = () => { try { return JSON.parse(localStorage.getItem(QT_STORAGE_KEY))||[]; } catch { return []; } };
+const qtSaveAll = q => localStorage.setItem(QT_STORAGE_KEY, JSON.stringify(q));
+
+function qtOpenSaveModal() {
+  if (!window._qtLastResult) { alert('Run a calculation first.'); return; }
+  document.getElementById('qt-quote-name').value = window._qtLastResult.clientName !== '[Client Name]' ? window._qtLastResult.clientName : '';
+  document.getElementById('qt-save-modal').classList.add('open');
+  setTimeout(() => document.getElementById('qt-quote-name').focus(), 100);
+}
+function qtSaveQuote() {
+  const name = document.getElementById('qt-quote-name').value.trim();
+  if (!name) { document.getElementById('qt-quote-name').style.borderColor='#ef4444'; return; }
+  const r = window._qtLastResult;
+  const entry = {
+    id: Date.now(), name,
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    quoteHtml: window._qtQuoteHtml, result: r,
+    formState: {
+      clientName: r.clientName, garmentDesc: r.garmentDesc,
+      apparelCost: r.apparelCost, qty: r.qty,
+      locState: {...qtLocState},
+      locSelects: Object.fromEntries(QT_LOC_KEYS.flatMap(k => [
+        [`qt-${k}-ht-size`,   document.getElementById(`qt-${k}-ht-size`).value],
+        [`qt-${k}-sp-colors`, document.getElementById(`qt-${k}-sp-colors`).value],
+      ]))
+    }
+  };
+  const all = qtLoadAll(); all.unshift(entry); qtSaveAll(all);
+  qtCloseModal('qt-save-modal');
+  toast('Quote saved!');
+}
+function qtOpenLoadModal()  { qtRenderQuoteList(); document.getElementById('qt-load-modal').classList.add('open'); }
+function qtRenderQuoteList() {
+  const all = qtLoadAll();
+  const c   = document.getElementById('qt-quote-list');
+  if (!all.length) { c.innerHTML='<div class="qt-empty-state">No saved quotes yet.</div>'; return; }
+  c.innerHTML = all.map(q => `
+    <div class="qt-quote-item" onclick="qtLoadQuote(${q.id})">
+      <div>
+        <div class="qt-qi-name">${qtEscHtml(q.name)}</div>
+        <div class="qt-qi-meta">${q.date} &middot; ${q.formState.qty} pcs &middot; ${qtFmt(q.result.totalUnit)}/ea</div>
+      </div>
+      <button class="qt-qi-del" onclick="qtDeleteQuote(event,${q.id})">&#128465;</button>
+    </div>`).join('');
+}
+function qtLoadQuote(id) {
+  const q = qtLoadAll().find(x => x.id === id); if (!q) return;
+  qtResetAll();
+  const fs = q.formState;
+  document.getElementById('qt-client-name').value  = fs.clientName||'';
+  document.getElementById('qt-garment-desc').value  = fs.garmentDesc||'';
+  document.getElementById('qt-apparel-cost').value  = fs.apparelCost;
+  document.getElementById('qt-qty').value           = fs.qty;
+  qtOnQtyChange();
+  QT_LOC_KEYS.forEach(k => {
+    if (fs.locState && fs.locState[k]) qtSetLocType(k, fs.locState[k]);
+    if (fs.locSelects) {
+      const htEl = document.getElementById(`qt-${k}-ht-size`);
+      const spEl = document.getElementById(`qt-${k}-sp-colors`);
+      if (htEl && fs.locSelects[`qt-${k}-ht-size`])   htEl.value = fs.locSelects[`qt-${k}-ht-size`];
+      if (spEl && fs.locSelects[`qt-${k}-sp-colors`])  spEl.value = fs.locSelects[`qt-${k}-sp-colors`];
+    }
+  });
+  qtCloseModal('qt-load-modal');
+  setTimeout(() => {
+    qtCalculate();
+    if (q.quoteHtml) { window._qtQuoteHtml = q.quoteHtml; qtRenderQuotePreview(q.quoteHtml); }
+  }, 80);
+}
+function qtDeleteQuote(e, id) {
+  e.stopPropagation();
+  if (!confirm('Delete this quote?')) return;
+  qtSaveAll(qtLoadAll().filter(x => x.id !== id)); qtRenderQuoteList();
+}
+function qtCloseModal(id) { document.getElementById(id).classList.remove('open'); }
+document.getElementById('qt-quote-name').addEventListener('keydown', e => { if (e.key==='Enter') qtSaveQuote(); });
 </script>
+
+<!-- ── Quote Builder FAB ─────────────────────────────────── -->
+<button class="quote-tool-fab" onclick="qtOpen()">&#128203; Quote Builder</button>
+
+<!-- ── Quote Builder Drawer overlay ─────────────────────── -->
+<div class="qt-overlay" id="qt-overlay" onclick="qtClose()"></div>
+
+<!-- ── Quote Builder Drawer ──────────────────────────────── -->
+<div class="qt-drawer" id="qt-drawer">
+  <div class="qt-drawer-header">
+    <div class="qt-drawer-title">4Z<span>Design</span> &nbsp;Quote Builder</div>
+    <div class="qt-drawer-actions">
+      <button class="qt-hdr-btn" onclick="qtOpenLoadModal()">&#128194; Saved</button>
+      <button class="qt-hdr-btn" onclick="qtResetAll()">+ New</button>
+      <button class="qt-close-btn" onclick="qtClose()" title="Close">&times;</button>
+    </div>
+  </div>
+
+  <div class="qt-body">
+
+    <!-- Step 1 -->
+    <div class="qt-card">
+      <div class="qt-card-title">Step 1 — Order Details</div>
+      <div class="qt-form-row">
+        <div class="qt-form-group">
+          <label for="qt-client-name">Client Name</label>
+          <input class="qt-input" type="text" id="qt-client-name" placeholder="e.g. Acme Corp" oninput="qtClearResults()">
+        </div>
+        <div class="qt-form-group">
+          <label for="qt-garment-desc">Garment</label>
+          <input class="qt-input" type="text" id="qt-garment-desc" placeholder="e.g. Cotton T-Shirt" oninput="qtClearResults()">
+        </div>
+      </div>
+      <div class="qt-form-row">
+        <div class="qt-form-group">
+          <label for="qt-apparel-cost">Apparel Cost / Piece ($)</label>
+          <input class="qt-input" type="number" id="qt-apparel-cost" min="0" step="0.01" placeholder="e.g. 9.00" oninput="qtClearResults()">
+        </div>
+        <div class="qt-form-group">
+          <label for="qt-qty">Quantity</label>
+          <input class="qt-input" type="number" id="qt-qty" min="1" step="1" placeholder="e.g. 50" oninput="qtOnQtyChange()">
+          <div class="qt-hint" id="qt-margin-hint"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="qt-card">
+      <div class="qt-card-title">Step 2 — Decorations <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#b0bec5;font-size:.75rem;">Select a type for each location</span></div>
+      <div class="qt-loc-grid" id="qt-loc-grid"></div>
+    </div>
+
+    <div class="qt-alert warn" id="qt-alert-warn"></div>
+    <div class="qt-alert err"  id="qt-alert-err"></div>
+
+    <button class="qt-calc-btn" onclick="qtCalculate()">Calculate Quote &#8594;</button>
+
+    <!-- Results -->
+    <div id="qt-results-section" style="margin-top:16px;">
+      <div class="qt-results-card">
+        <div class="qt-card-title">Your Numbers</div>
+        <div class="qt-results-primary">
+          <div class="qt-res-big"><div class="val" id="qt-r-total-unit">—</div><div class="lbl">Per Unit</div></div>
+          <div class="qt-res-big"><div class="val" id="qt-r-total-order">—</div><div class="lbl">Total Order</div></div>
+          <div class="qt-res-big"><div class="val" id="qt-r-profit">—</div><div class="lbl">Net Profit</div></div>
+        </div>
+        <div class="qt-loc-breakdown" id="qt-loc-breakdown"></div>
+        <div class="qt-results-secondary">
+          <div class="qt-res-row"><span class="rk">Apparel Cost</span><span class="rv" id="qt-r-apparel">—</span></div>
+          <div class="qt-res-row"><span class="rk">Total Decoration</span><span class="rv" id="qt-r-print-total">—</span></div>
+          <div class="qt-res-row"><span class="rk">Sub Total / unit</span><span class="rv" id="qt-r-subtotal">—</span></div>
+          <div class="qt-res-row"><span class="rk">Margin Rate</span><span class="rv" id="qt-r-margin-rate">—</span></div>
+          <div class="qt-res-row"><span class="rk">Gross Margin $</span><span class="rv" id="qt-r-margin">—</span></div>
+          <div class="qt-res-row"><span class="rk">IPU Cost (10%)</span><span class="rv" id="qt-r-ipu-total">—</span></div>
+          <div class="qt-res-row highlight span2"><span class="rk">Profit After IPU</span><span class="rv" id="qt-r-profit2">—</span></div>
+        </div>
+      </div>
+
+      <div class="qt-card">
+        <div class="qt-quote-header">
+          <div class="qt-card-title" style="margin:0;">Client Quote</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="qt-copy-flash" id="qt-copy-flash">Copied!</span>
+            <button class="qt-btn-outline" style="flex:none;padding:6px 12px;font-size:.75rem;" onclick="qtOpenEditModal()">&#9999;&#65039; Edit HTML</button>
+          </div>
+        </div>
+        <iframe id="qt-quote-preview" title="Quote Preview" sandbox="allow-same-origin"></iframe>
+        <div class="qt-quote-actions">
+          <button class="qt-btn-outline" onclick="qtCopyHtml()">&#128203; Copy HTML</button>
+          <button class="qt-btn-outline" onclick="qtCopyPlainText()">&#128196; Plain Text</button>
+          <button class="qt-btn-solid"   onclick="qtOpenSaveModal()">&#128190; Save Quote</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /qt-body -->
+</div><!-- /qt-drawer -->
+
+<!-- Quote Builder Modals (z-index 1000, above drawer) -->
+<div class="qt-overlay-modal" id="qt-edit-modal">
+  <div class="qt-modal" style="max-width:640px;">
+    <div class="qt-modal-title">Edit Quote HTML</div>
+    <div class="qt-modal-sub">Modify then click Apply.</div>
+    <textarea id="qt-edit-html-area"></textarea>
+    <div class="qt-modal-actions">
+      <button class="qt-btn-outline" onclick="qtCloseModal('qt-edit-modal')">Cancel</button>
+      <button class="qt-btn-solid"   onclick="qtApplyEditedHtml()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="qt-overlay-modal" id="qt-save-modal">
+  <div class="qt-modal">
+    <div class="qt-modal-title">Save This Quote</div>
+    <div class="qt-modal-sub">Name it so you can pull it back up later.</div>
+    <div class="qt-form-group">
+      <label for="qt-quote-name">Quote Name</label>
+      <input class="qt-input" type="text" id="qt-quote-name" placeholder="e.g. Acme Corp — 50 Polos">
+    </div>
+    <div class="qt-modal-actions">
+      <button class="qt-btn-outline" onclick="qtCloseModal('qt-save-modal')">Cancel</button>
+      <button class="qt-btn-solid"   onclick="qtSaveQuote()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="qt-overlay-modal" id="qt-load-modal">
+  <div class="qt-modal">
+    <div class="qt-modal-title">Saved Quotes</div>
+    <div class="qt-modal-sub">Click a quote to restore it.</div>
+    <div class="qt-quote-list" id="qt-quote-list"></div>
+    <div class="qt-modal-actions">
+      <button class="qt-btn-outline" onclick="qtCloseModal('qt-load-modal')" style="flex:none;padding:9px 22px;">Close</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>"""
