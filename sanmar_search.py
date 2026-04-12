@@ -21,8 +21,7 @@ import requests
 import xml.etree.ElementTree as ET
 from flask import Flask, request, jsonify, render_template_string
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+import datetime
 
 app = Flask(__name__)
 
@@ -3531,27 +3530,26 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
 
 
 # ─── Main ────────────────────────────────────────────────────────────────────
-# ─── Scheduled Catalog Rebuild ───────────────────────────────────────────────
-def scheduled_catalog_rebuild():
-    """Run at 1am every Monday. Skip if a build is already in progress."""
-    if _index_status.get('running'):
-        print("[SCHEDULER] Catalog build already running — skipping scheduled rebuild.")
-        return
-    print("[SCHEDULER] Starting scheduled weekly catalog rebuild...")
-    thread = threading.Thread(target=build_catalog_background, daemon=True)
-    thread.start()
-
-# Only start the scheduler in the main process (not in gunicorn worker reloads)
-if not os.environ.get('WERKZEUG_RUN_MAIN'):
-    _scheduler = BackgroundScheduler(timezone='America/Los_Angeles')
-    _scheduler.add_job(
-        scheduled_catalog_rebuild,
-        CronTrigger(day_of_week='mon', hour=1, minute=0),
-        id='weekly_catalog_rebuild',
-        replace_existing=True,
-    )
-    _scheduler.start()
+# ─── Scheduled Catalog Rebuild (no external dependencies) ────────────────────
+def _catalog_scheduler_loop():
+    """Background thread — wakes every minute, builds catalog on Monday at 1am PT."""
     print("[SCHEDULER] Weekly catalog rebuild scheduled — Mondays at 1:00 AM PT.")
+    while True:
+        try:
+            now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-8)))
+            if now.weekday() == 0 and now.hour == 1 and now.minute == 0:
+                if not _index_status.get('running'):
+                    print("[SCHEDULER] Starting weekly catalog rebuild...")
+                    t = threading.Thread(target=build_catalog_background, daemon=True)
+                    t.start()
+                time.sleep(61)   # skip the rest of this minute
+            else:
+                time.sleep(60)
+        except Exception as e:
+            print(f"[SCHEDULER] Error: {e}")
+            time.sleep(60)
+
+threading.Thread(target=_catalog_scheduler_loop, daemon=True, name='catalog-scheduler').start()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
