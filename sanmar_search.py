@@ -1963,6 +1963,29 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   #qt-results-section { display: none; }
 
+  .catalog-reminder {
+    display: none; position: fixed; bottom: 24px; left: 24px; z-index: 800;
+    background: #fff; border: 2px solid #f59e0b; border-radius: 12px;
+    padding: 14px 18px; max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    font-size: 13px; color: #1a2744; line-height: 1.5;
+  }
+  .catalog-reminder.show { display: block; }
+  .catalog-reminder strong { color: #92400e; display: block; margin-bottom: 4px; font-size: 13px; }
+  .catalog-reminder-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .cr-btn-rebuild {
+    flex: 1; background: #1a2744; color: #fff; border: none;
+    border-radius: 7px; padding: 7px 12px; font-size: 12px;
+    font-weight: 700; cursor: pointer; transition: background .2s;
+  }
+  .cr-btn-rebuild:hover { background: #243564; }
+  .cr-btn-dismiss {
+    background: transparent; border: 1.5px solid #e2e8f0; border-radius: 7px;
+    padding: 7px 12px; font-size: 12px; font-weight: 600;
+    color: #64748b; cursor: pointer; transition: all .2s;
+  }
+  .cr-btn-dismiss:hover { border-color: #94a3b8; }
+
   .quote-tool-fab {
     position: fixed; bottom: 28px; right: 28px; z-index: 800;
     background: linear-gradient(135deg, #e8701a, #d0611a);
@@ -2957,6 +2980,36 @@ function toast(msg, isError) {
   setTimeout(() => { el.className = 'toast'; }, 3000);
 }
 
+// ─── Catalog Age Reminder ─────────────────────────────────────────────────────
+const REMINDER_DISMISS_KEY = '4zd_catalog_dismissed';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+async function checkCatalogAge() {
+  try {
+    const resp = await fetch('/api/catalog/status');
+    const data = await resp.json();
+    if (!data.last_built) return; // catalog never built, build button visible already
+
+    const builtAt   = new Date(data.last_built);
+    const ageMs     = Date.now() - builtAt.getTime();
+    if (ageMs < THIRTY_DAYS_MS) return; // fresh enough
+
+    // Check if user dismissed recently
+    const dismissed = localStorage.getItem(REMINDER_DISMISS_KEY);
+    if (dismissed && (Date.now() - parseInt(dismissed)) < THIRTY_DAYS_MS) return;
+
+    // Show the reminder
+    document.getElementById('catalog-reminder').classList.add('show');
+  } catch(e) { /* silently ignore if API unreachable */ }
+}
+
+function dismissCatalogReminder() {
+  localStorage.setItem(REMINDER_DISMISS_KEY, Date.now().toString());
+  document.getElementById('catalog-reminder').classList.remove('show');
+}
+
+window.addEventListener('load', checkCatalogAge);
+
 // ─── Quote Builder — Modal open/close ────────────────────────────────────────
 function qtOpen() {
   document.getElementById('qt-overlay').classList.add('open');
@@ -3304,6 +3357,16 @@ function qtDeleteQuote(e, id) {
 }
 function qtCloseModal(id) { document.getElementById(id).classList.remove('open'); }
 </script>
+
+<!-- ── Catalog Reminder Banner ────────────────────────────── -->
+<div class="catalog-reminder" id="catalog-reminder">
+  <strong>&#9888;&#65039; Catalog may be outdated</strong>
+  Your product catalog hasn't been rebuilt in over 30 days. New SanMar products may be missing.
+  <div class="catalog-reminder-actions">
+    <button class="cr-btn-rebuild" onclick="buildCatalog();dismissCatalogReminder()">Rebuild Now</button>
+    <button class="cr-btn-dismiss" onclick="dismissCatalogReminder()">Remind Later</button>
+  </div>
+</div>
 
 <!-- ── Quote Builder FAB ─────────────────────────────────── -->
 <button class="quote-tool-fab" onclick="qtOpen()">&#128203; Quote Builder</button>
