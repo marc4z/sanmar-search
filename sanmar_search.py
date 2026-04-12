@@ -3261,7 +3261,28 @@ function qtRenderQuotePreview(html) {
 
 // ─── Quote Builder — Copy / Edit ─────────────────────────────────────────────
 function qtFlash() { const f = document.getElementById('qt-copy-flash'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2000); }
-function qtCopyHtml()       { navigator.clipboard.writeText(window._qtQuoteHtml||'').then(qtFlash); }
+function qtOpenEmail() {
+  const r = window._qtLastResult; if (!r) return;
+  const subject = encodeURIComponent('Quote — ' + r.garmentDesc + ' x' + r.qty);
+  const body    = encodeURIComponent(
+    'Hi ' + r.clientName + ',\n\n' +
+    'Thanks for reaching out\u2014here\u2019s a first pass on your quote:\n\n' +
+    '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n' +
+    'QUOTE SUMMARY\n' +
+    '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n' +
+    'Garment:           ' + r.garmentDesc + '\n' +
+    'Decoration:\n' + r.active.map(a => '  ' + a.locLabel + ': ' + a.label).join('\n') + '\n' +
+    'Quantity:          ' + r.qty + ' pieces\n' +
+    'Price per garment: ' + qtFmt(r.totalUnit) + '\n' +
+    'Total:             ' + qtFmt(r.totalOrder) + '\n' +
+    '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n' +
+    'This includes the decoration and is based on the quantity above.\n\n' +
+    'Shipping and sales tax are not included and will be added once we finalize details.\n\n' +
+    'If you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.\n\n' +
+    '\u2014 Marc\n4Z Design\nmarc@4zdesign.com'
+  );
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
 function qtCopyPlainText() {
   const r = window._qtLastResult; if (!r) return;
   const text = `Hi ${r.clientName},\n\nThanks for reaching out—here's a first pass on your quote:\n\n──────────────────────────────\nQUOTE SUMMARY\n──────────────────────────────\nGarment:           ${r.garmentDesc}\nDecoration:\n${r.active.map(a=>'  '+a.locLabel+': '+a.label).join('\n')}\nQuantity:          ${r.qty} pieces\nPrice per garment: ${qtFmt(r.totalUnit)}\nTotal:             ${qtFmt(r.totalOrder)}\n──────────────────────────────\n\nThis includes the decoration and is based on the quantity above.\n\nShipping and sales tax are not included and will be added once we finalize details.\n\nIf you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.\n\n— Marc\n4Z Design\nmarc@4zdesign.com`;
@@ -3453,8 +3474,8 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
         </div>
         <iframe id="qt-quote-preview" title="Quote Preview" sandbox="allow-same-origin"></iframe>
         <div class="qt-quote-actions">
-          <button class="qt-btn-outline" onclick="qtCopyHtml()">&#128203; Copy HTML</button>
-          <button class="qt-btn-outline" onclick="qtCopyPlainText()">&#128196; Plain Text</button>
+          <button class="qt-btn-outline" onclick="qtOpenEmail()">&#128231; Open in Email</button>
+          <button class="qt-btn-outline" onclick="qtCopyPlainText()">&#128196; Copy Text</button>
           <button class="qt-btn-solid"   onclick="qtOpenSaveModal()">&#128190; Save Quote</button>
         </div>
       </div>
