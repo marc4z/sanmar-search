@@ -1838,6 +1838,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .qt-input::-webkit-inner-spin-button { opacity: .5; }
 
   .qt-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hidden { display: none !important; }
   .qt-loc-panel {
     border: 2px solid #e2e8f0; border-radius: 10px; padding: 14px;
     transition: all .2s; background: #f8fafc;
@@ -3048,7 +3049,10 @@ function qtBuildPanel(key) {
   </div>`;
 }
 
-document.getElementById('qt-loc-grid').innerHTML = QT_LOC_KEYS.map(qtBuildPanel).join('');
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('qt-loc-grid').innerHTML = QT_LOC_KEYS.map(qtBuildPanel).join('');
+  document.getElementById('qt-quote-name').addEventListener('keydown', e => { if (e.key==='Enter') qtSaveQuote(); });
+});
 
 function qtSetLocType(key, type) {
   qtLocState[key] = type;
@@ -3290,7 +3294,6 @@ function qtDeleteQuote(e, id) {
   qtSaveAll(qtLoadAll().filter(x => x.id !== id)); qtRenderQuoteList();
 }
 function qtCloseModal(id) { document.getElementById(id).classList.remove('open'); }
-document.getElementById('qt-quote-name').addEventListener('keydown', e => { if (e.key==='Enter') qtSaveQuote(); });
 </script>
 
 <!-- ── Quote Builder FAB ─────────────────────────────────── -->
