@@ -1773,21 +1773,28 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.error { background: var(--danger); }
 
-  /* ── Quote Builder Drawer ─────────────────────────────── */
+  /* ── Quote Builder Modal ──────────────────────────────── */
   .qt-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.45); z-index: 900;
+    background: rgba(0,0,0,.55); z-index: 900;
+    align-items: center; justify-content: center;
   }
-  .qt-overlay.open { display: block; }
+  .qt-overlay.open { display: flex; }
 
   .qt-drawer {
-    position: fixed; top: 0; right: -560px; width: 540px; max-width: 100vw;
-    height: 100vh; background: #eef0f4; z-index: 901;
-    box-shadow: -6px 0 32px rgba(0,0,0,.22);
-    transition: right .3s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    width: 80vw; max-width: 960px; height: 82vh;
+    background: #eef0f4; z-index: 901;
+    border-radius: 18px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.35);
     display: flex; flex-direction: column; overflow: hidden;
+    opacity: 0; transform: scale(.96);
+    transition: opacity .2s ease, transform .2s ease;
+    pointer-events: none;
   }
-  .qt-drawer.open { right: 0; }
+  .qt-overlay.open .qt-drawer {
+    opacity: 1; transform: scale(1); pointer-events: all;
+  }
 
   .qt-drawer-header {
     background: #1a2744; color: #fff; padding: 0 20px;
@@ -2301,8 +2308,9 @@ function sortBrowseResults() {
     const name = p.productName || p.productId;
     const brand = p.productBrand ? `<div style="font-size:11px;color:var(--text-light);margin-top:3px;">${p.productBrand}</div>` : '';
     const price = p.basePrice ? `<div style="font-size:14px;font-weight:700;color:#16a34a;margin-top:4px;">$${p.basePrice}</div>` : '';
+    const safeName = (name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const addBtn = p.basePrice
-      ? `<button class="add-quote-btn-sm" onclick="event.stopPropagation();addToQuote(${JSON.stringify(name)},${p.basePrice})">+ Quote</button>`
+      ? `<button class="add-quote-btn-sm" data-qname="${safeName}" data-qprice="${p.basePrice}" onclick="event.stopPropagation();addToQuote(this.dataset.qname,this.dataset.qprice)">+ Quote</button>`
       : '';
     html += `<div class="keyword-result-card" onclick="loadProduct('${p.productId}')" style="text-align:left;padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:start;">
@@ -2788,7 +2796,7 @@ function renderProductCard(prod) {
         <div class="product-desc">${prod.description || 'No description available.'}</div>
         ${prod.basePrice ? `<div class="price-block"><span class="price-main">$${prod.basePrice}</span><span class="price-label">per unit</span></div>` : ''}
         ${priceTiersHtml}
-        ${prod.basePrice ? `<button class="add-quote-btn" onclick="addToQuote(${JSON.stringify(prod.productName||prod.productId)},${prod.basePrice})">📋 Add to Quote</button>` : ''}
+        ${prod.basePrice ? `<button class="add-quote-btn" data-qname="${(prod.productName||prod.productId||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qprice="${prod.basePrice}" onclick="addToQuote(this.dataset.qname,this.dataset.qprice)">&#128203; Add to Quote</button>` : ''}
         ${swatchesHtml}
       </div>
     </div>
@@ -2949,13 +2957,11 @@ function toast(msg, isError) {
   setTimeout(() => { el.className = 'toast'; }, 3000);
 }
 
-// ─── Quote Builder — Drawer open/close ───────────────────────────────────────
+// ─── Quote Builder — Modal open/close ────────────────────────────────────────
 function qtOpen() {
-  document.getElementById('qt-drawer').classList.add('open');
   document.getElementById('qt-overlay').classList.add('open');
 }
 function qtClose() {
-  document.getElementById('qt-drawer').classList.remove('open');
   document.getElementById('qt-overlay').classList.remove('open');
 }
 
@@ -3025,9 +3031,9 @@ function qtBuildPanel(key) {
     <span class="qt-loc-name">${QT_LOC_LABELS[key]}</span>
     <div class="qt-loc-pills">
       <button class="qt-loc-pill active-none" id="qt-pill-${key}-none"       onclick="qtSetLocType('${key}','none')">None</button>
-      <button class="qt-loc-pill"             id="qt-pill-${key}-heat"       onclick="qtSetLocType('${key}','heat')">\uD83D\uDD25 Heat</button>
-      <button class="qt-loc-pill"             id="qt-pill-${key}-embroidery" onclick="qtSetLocType('${key}','embroidery')">\uD83E\uDDF5 Emb</button>
-      <button class="qt-loc-pill"             id="qt-pill-${key}-screen"     onclick="qtSetLocType('${key}','screen')">\uD83D\uDDA8\uFE0F Screen</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-heat"       onclick="qtSetLocType('${key}','heat')">&#128293; Heat Transfer</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-embroidery" onclick="qtSetLocType('${key}','embroidery')">&#129525; Embroidery</button>
+      <button class="qt-loc-pill"             id="qt-pill-${key}-screen"     onclick="qtSetLocType('${key}','screen')">&#128424; Screen Print</button>
     </div>
     <div class="qt-loc-opts hidden" id="qt-opts-${key}-heat">
       <div class="qt-form-group">
@@ -3049,10 +3055,13 @@ function qtBuildPanel(key) {
   </div>`;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('qt-loc-grid').innerHTML = QT_LOC_KEYS.map(qtBuildPanel).join('');
-  document.getElementById('qt-quote-name').addEventListener('keydown', e => { if (e.key==='Enter') qtSaveQuote(); });
-});
+(function qtInit() {
+  const grid  = document.getElementById('qt-loc-grid');
+  const qname = document.getElementById('qt-quote-name');
+  if (!grid || !qname) { setTimeout(qtInit, 30); return; }
+  grid.innerHTML = QT_LOC_KEYS.map(qtBuildPanel).join('');
+  qname.addEventListener('keydown', e => { if (e.key === 'Enter') qtSaveQuote(); });
+})();
 
 function qtSetLocType(key, type) {
   qtLocState[key] = type;
@@ -3299,10 +3308,8 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
 <!-- ── Quote Builder FAB ─────────────────────────────────── -->
 <button class="quote-tool-fab" onclick="qtOpen()">&#128203; Quote Builder</button>
 
-<!-- ── Quote Builder Drawer overlay ─────────────────────── -->
-<div class="qt-overlay" id="qt-overlay" onclick="qtClose()"></div>
-
-<!-- ── Quote Builder Drawer ──────────────────────────────── -->
+<!-- ── Quote Builder Modal ───────────────────────────────── -->
+<div class="qt-overlay" id="qt-overlay" onclick="if(event.target===this)qtClose()">
 <div class="qt-drawer" id="qt-drawer">
   <div class="qt-drawer-header">
     <div class="qt-drawer-title">4Z<span>Design</span> &nbsp;Quote Builder</div>
@@ -3392,8 +3399,9 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
 
   </div><!-- /qt-body -->
 </div><!-- /qt-drawer -->
+</div><!-- /qt-overlay -->
 
-<!-- Quote Builder Modals (z-index 1000, above drawer) -->
+<!-- Quote Builder Modals (z-index 1000, above modal) -->
 <div class="qt-overlay-modal" id="qt-edit-modal">
   <div class="qt-modal" style="max-width:640px;">
     <div class="qt-modal-title">Edit Quote HTML</div>
