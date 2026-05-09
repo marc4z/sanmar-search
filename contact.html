@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact – Mill Creek Chamber of Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #2D3A7C;
+  --navy-dark: #1E2A5E;
+  --navy-mid: #3D4FA0;
+  --navy-light: #5468B8;
+  --gold: #C9922A;
+  --gold-bright: #E8B84B;
+  --gold-pale: #FDF6E8;
+  --gold-deep: #9C6B15;
+  --teal: #1A7A6E;
+  --teal-light: #22A394;
+  --teal-pale: #E3F7F5;
+  --gray-light: #F7F8FC;
+  --gray-mid: #8B8FA8;
+  --gray-border: #E2E5F0;
+  --white: #ffffff;
+  --text-dark: #1E2440;
+  --text-mid: #5A6080;
+}
+
+body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); font-size: 16px; line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { background: var(--navy-dark); color: rgba(255,255,255,0.75); font-size: 12.5px; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.topbar a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-bright); }
+.topbar-links { display: flex; gap: 24px; align-items: center; }
+.topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+.topbar-member-btn { background: var(--gold); color: white !important; padding: 4px 14px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+.topbar-member-btn:hover { background: var(--gold-bright) !important; color: var(--navy-dark) !important; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--gray-border); position: sticky; top: 0; z-index: 200; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.logo-wrap { display: flex; align-items: center; text-decoration: none; }
+.logo-wrap img { height: 67px; width: auto; }
+nav { display: flex; align-items: center; gap: 2px; }
+nav a { color: var(--text-mid); text-decoration: none; font-size: 14px; font-weight: 500; padding: 7px 13px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+nav a:hover { color: var(--navy); background: var(--gray-light); }
+nav a.active { color: var(--navy); font-weight: 600; }
+.nav-cta { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%); color: white !important; padding: 9px 22px !important; border-radius: 50px !important; font-weight: 600 !important; margin-left: 10px; box-shadow: 0 4px 14px rgba(30,42,94,0.3); }
+.nav-cta:hover { box-shadow: 0 6px 20px rgba(30,42,94,0.4) !important; }
+
+/* PAGE HERO */
+.page-hero {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-mid) 100%);
+  padding: 72px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 360px; height: 360px; border-radius: 50%; background: rgba(201,146,42,0.06); }
+.page-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+.breadcrumb a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gold-bright); }
+.page-hero-inner h1 { font-family: 'Playfair Display', serif; font-size: 50px; font-weight: 700; color: white; margin-bottom: 12px; line-height: 1.1; }
+.page-hero-inner p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 520px; line-height: 1.75; }
+
+/* BODY */
+.page-body { max-width: 1200px; margin: 0 auto; padding: 72px 40px; display: grid; grid-template-columns: 1fr 480px; gap: 72px; align-items: start; }
+
+/* INFO PANEL */
+.info-panel { }
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 10px; }
+.info-intro { font-size: 16px; color: var(--text-mid); line-height: 1.75; margin-bottom: 40px; max-width: 460px; }
+
+.contact-cards { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
+.contact-card { display: flex; gap: 18px; align-items: flex-start; padding: 22px; background: var(--gray-light); border: 1px solid var(--gray-border); border-radius: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
+.contact-card:hover { border-color: var(--gold-bright); box-shadow: 0 4px 16px rgba(30,42,94,0.07); }
+.contact-card-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cci-gold { background: linear-gradient(135deg, var(--gold-pale) 0%, #FCE4A8 100%); }
+.cci-navy { background: linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%); }
+.cci-teal { background: linear-gradient(135deg, var(--teal-pale) 0%, #B2DFDB 100%); }
+.cci-mid { background: linear-gradient(135deg, #EEF0FA 0%, #D5DAF0 100%); }
+.contact-card-info h4 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 4px; }
+.contact-card-info a { font-size: 16px; font-weight: 600; color: var(--navy); text-decoration: none; display: block; transition: color 0.2s; }
+.contact-card-info a:hover { color: var(--gold-deep); }
+.contact-card-info p { font-size: 14px; color: var(--text-mid); line-height: 1.5; }
+.contact-card-info .hours { font-size: 13px; color: var(--gray-mid); margin-top: 3px; }
+
+/* MAP PLACEHOLDER */
+.map-placeholder {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--gray-border);
+  height: 220px;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.map-placeholder:hover { opacity: 0.9; }
+.map-placeholder .map-icon { font-size: 36px; }
+.map-placeholder strong { color: white; font-size: 15px; }
+.map-placeholder span { font-size: 13px; color: rgba(255,255,255,0.6); }
+
+/* FORM PANEL */
+.form-panel { background: white; border: 1px solid var(--gray-border); border-radius: 20px; padding: 44px 40px; box-shadow: 0 8px 32px rgba(30,42,94,0.07); }
+.form-panel h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.form-panel p { font-size: 14px; color: var(--text-mid); margin-bottom: 28px; line-height: 1.65; }
+.contact-form { display: flex; flex-direction: column; gap: 18px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field label { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+.form-field input,
+.form-field textarea { padding: 12px 16px; border: 1.5px solid var(--gray-border); border-radius: 8px; font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--text-dark); outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: white; resize: none; }
+.form-field input:focus,
+.form-field textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(45,58,124,0.08); }
+.form-field input::placeholder,
+.form-field textarea::placeholder { color: var(--gray-mid); }
+.form-field textarea { height: 130px; }
+.btn-submit { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); color: white; padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 14px rgba(30,42,94,0.25); transition: transform 0.15s, box-shadow 0.2s; width: 100%; margin-top: 4px; }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(30,42,94,0.35); }
+.form-divider { display: flex; align-items: center; gap: 12px; color: var(--gray-mid); font-size: 13px; }
+.form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-border); }
+.membership-note { background: var(--gold-pale); border: 1px solid rgba(201,146,42,0.2); border-radius: 10px; padding: 16px 18px; font-size: 13px; color: var(--gold-deep); line-height: 1.65; }
+.membership-note strong { color: var(--navy); display: block; margin-bottom: 4px; }
+.btn-join-inline { display: inline-flex; align-items: center; gap: 6px; color: var(--gold-deep); font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: 1.5px solid var(--gold); padding-bottom: 1px; transition: color 0.2s; }
+.btn-join-inline:hover { color: var(--navy); }
+
+/* FOOTER */
+.footer-accent { width: 100%; height: 3px; background: linear-gradient(90deg, var(--navy-light) 0%, var(--gold) 50%, var(--teal) 100%); }
+footer { background: var(--navy-dark); padding: 32px 40px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.footer-bottom a:hover { color: var(--gold-bright); }
+</style>
+<style>
+/* ===== MOBILE RESPONSIVE ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar { display: none; }
+
+  /* HEADER */
+  .header-inner { padding: 0 16px; height: 64px; }
+  .logo-wrap img { height: 48px; }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE NAV OVERLAY */
+  nav {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--navy-dark);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 250;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  nav.mobile-open { display: flex !important; }
+  nav a {
+    color: white !important;
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05) !important;
+    white-space: normal !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+  }
+  nav a:hover { background: rgba(255,255,255,0.12) !important; }
+  nav a.active { color: var(--gold-bright) !important; }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+    color: var(--navy-dark) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-close-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* HERO */
+  .hero { min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr !important; padding: 60px 20px 48px !important; gap: 0 !important; }
+  .hero h1 { font-size: 34px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; padding-top: 24px; margin-top: 8px; }
+  .hero-card { display: none !important; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+
+  /* TRUST */
+  .trust-strip { display: none; }
+
+  /* VALUE */
+  .value-strip { padding: 36px 16px; }
+  .value-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .value-card { padding: 18px 14px; }
+
+  /* SECTIONS */
+  section { padding: 52px 20px !important; }
+
+  /* EVENTS GRID */
+  .events-grid { grid-template-columns: 1fr !important; }
+  .events-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .events-divider + .events-section .section-inner { padding-top: 52px; }
+
+  /* MEMBERSHIP */
+  .tiers-grid { grid-template-columns: 1fr !important; }
+  .membership-section { padding: 52px 20px !important; }
+
+  /* ABOUT STRIP */
+  .about-grid { grid-template-columns: 1fr !important; gap: 32px; }
+  .about-photo-placeholder, .about-photo { height: 240px; border-radius: 12px; }
+  .about-badge { bottom: 12px; right: 12px; }
+  .about-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY */
+  .dir-grid { grid-template-columns: 1fr !important; }
+  .dir-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* CONTACT BAR */
+  .contact-bar { padding: 48px 20px; }
+  .contact-bar-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .contact-panel { min-width: auto; }
+
+  /* FOOTER */
+  footer { padding: 40px 16px 24px; }
+  .footer-top { grid-template-columns: 1fr !important; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* PAGE HERO */
+  .page-hero { padding: 44px 20px; }
+  .page-hero-inner h1 { font-size: 32px !important; }
+  .page-hero-inner { grid-template-columns: 1fr !important; }
+  .hero-cta-box { min-width: auto; width: 100%; }
+  .hero-range { flex-wrap: wrap; justify-content: center; }
+
+  /* EVENTS PAGE */
+  .page-body { grid-template-columns: 1fr !important; gap: 32px; padding: 32px 20px !important; }
+  .sidebar { position: static !important; top: auto; }
+  .event-row { grid-template-columns: 56px 1fr; gap: 12px; padding: 18px 0; }
+  .event-row:hover { margin: 0; padding: 18px 0; border-radius: 0; background: none; }
+  .event-date-box { width: 56px; height: 56px; border-radius: 8px; }
+  .event-date-box .dy { font-size: 22px; }
+  .month-heading { font-size: 22px; }
+  .event-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY PAGE */
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr 1fr !important; }
+  .search-bar { padding: 12px 16px; top: 64px; }
+  .search-inner { flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+  .result-count { display: none; }
+
+  /* ABOUT PAGE */
+  .mission-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .mission-photo { height: 260px; border-radius: 14px; }
+  .mission-photo img { border-radius: 14px; }
+  .mission-photo-badge { bottom: -10px; right: -10px; padding: 12px 16px; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; gap: 20px; }
+  .impact-num { font-size: 32px !important; }
+  .events-pillars { grid-template-columns: 1fr !important; }
+  .benefits-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+  .join-panel { position: static !important; }
+  .quick-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .quick-list { grid-template-columns: 1fr !important; }
+  .quick-benefits { padding: 52px 20px; }
+
+  /* JOIN PAGE */
+  .tiers-section, .benefits-section, .callout-section { padding: 52px 20px !important; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+
+  /* CONTACT PAGE */
+  .contact-cards { gap: 12px; }
+  .contact-card { padding: 16px; }
+  .map-placeholder { height: 160px; }
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* BOARD PAGE */
+  .officer-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .officer-photo { width: 100% !important; height: 240px; object-position: center 10%; }
+  .officer-body { padding: 20px 20px 24px; }
+  .officer-body::before { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 4px; }
+  .board-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .board-photo { width: 100% !important; height: 200px; object-position: center 10%; }
+  .board-body { padding: 18px 20px 20px; }
+
+  /* GENERAL */
+  .section-title { font-size: 28px !important; }
+}
+
+@media (max-width: 480px) {
+  .value-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr !important; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; }
+  .hero h1 { font-size: 28px !important; }
+  .hero-actions a { width: 100%; text-align: center; justify-content: center; }
+  .stat-num { font-size: 26px !important; }
+  .section-title { font-size: 24px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>📍 15720 Main St #210, Mill Creek, WA 98012 &nbsp;·&nbsp; Serving Mill Creek since 2000</span>
+    <div class="topbar-links">
+      <a href="tel:4256736200">(425) 673-6200</a>
+      <div class="topbar-divider"></div>
+      <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+      <div class="topbar-divider"></div>
+      <a href="#" class="topbar-member-btn">Member Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="events.html">Events</a>
+      <a href="directory.html">Member Directory</a>
+      <a href="contact.html" class="active">Contact</a>
+      <a href="join.html" class="nav-cta">Join the Chamber</a>
+    </nav>
+    <button class="nav-toggle" id="mobileNavToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;›&nbsp; Contact</div>
+    <h1>Get in Touch</h1>
+    <p>Questions about membership, events, or how the Chamber can help your business? We'd love to hear from you.</p>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- LEFT: INFO -->
+  <div class="info-panel">
+    <div class="section-label">Chamber Information</div>
+    <h2 class="section-title">We're Here to Help</h2>
+    <p class="info-intro">Reach out any time during business hours — whether you have a quick question or want to talk through what membership could mean for your business.</p>
+
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="contact-card-icon cci-gold">📞</div>
+        <div class="contact-card-info">
+          <h4>Phone</h4>
+          <a href="tel:14256736200">(425) 673-6200</a>
+          <p class="hours">Mon – Fri &nbsp;·&nbsp; 8:00 AM – 5:00 PM</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon cci-navy">✉️</div>
+        <div class="contact-card-info">
+          <h4>Email</h4>
+          <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+          <p class="hours">We'll respond within one business day</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon cci-teal">📍</div>
+        <div class="contact-card-info">
+          <h4>Address</h4>
+          <p>15720 Main Street #210<br>Mill Creek, WA 98012</p>
+          <p class="hours">Located in Mill Creek City Hall North</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-card-icon cci-mid">👤</div>
+        <div class="contact-card-info">
+          <h4>Interim Director</h4>
+          <a href="mailto:director@millcreekchamber.org">Adri Boer</a>
+          <p class="hours">director@millcreekchamber.org</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="https://maps.google.com/?q=15720+Main+Street+%23210+Mill+Creek+WA+98012" class="map-placeholder" target="_blank">
+      <span class="map-icon">🗺️</span>
+      <strong>Mill Creek City Hall North</strong>
+      <span>15720 Main Street #210 · Click to open in Google Maps</span>
+    </a>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <div class="form-panel">
+    <h2>Send Us a Message</h2>
+    <p>Fill out the form below and we'll get back to you within one business day. Or perhaps you'd like to speak to someone about membership — we'd love the opportunity to discuss how your business could grow through a connection with the Mill Creek Chamber.</p>
+
+    <div class="contact-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="ct-name">Name</label>
+          <input type="text" id="ct-name" placeholder="Jane Smith">
+        </div>
+        <div class="form-field">
+          <label for="ct-phone">Phone Number</label>
+          <input type="tel" id="ct-phone" placeholder="(425) 555-0100">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="ct-email">Email</label>
+        <input type="email" id="ct-email" placeholder="jane@yourbusiness.com">
+      </div>
+      <div class="form-field">
+        <label for="ct-message">Message</label>
+        <textarea id="ct-message" placeholder="How can we help you?"></textarea>
+      </div>
+      <button class="btn-submit" onclick="this.textContent='Message Sent ✓'; this.style.background='#1A7A6E'; this.disabled=true;">Send Message</button>
+
+      <div class="form-divider">or</div>
+
+      <div class="membership-note">
+        <strong>Interested in membership?</strong>
+        We'd love to walk you through the options and find the right level for your business. <a href="join.html" class="btn-join-inline">View membership levels →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer-accent"></div>
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Mill Creek Chamber of Commerce · All rights reserved.</span>
+    <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a></span>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  var toggle = document.getElementById('mobileNavToggle');
+  var nav = document.querySelector('nav');
+  if (!toggle || !nav) return;
+
+  // Add close button
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close-btn';
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function openNav() {
+    nav.classList.add('mobile-open');
+    toggle.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    nav.classList.contains('mobile-open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeNav);
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Directory – Mill Creek Chamber of Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #2D3A7C;
+  --navy-dark: #1E2A5E;
+  --navy-mid: #3D4FA0;
+  --navy-light: #5468B8;
+  --gold: #C9922A;
+  --gold-bright: #E8B84B;
+  --gold-pale: #FDF6E8;
+  --gold-deep: #9C6B15;
+  --teal: #1A7A6E;
+  --teal-light: #22A394;
+  --teal-pale: #E3F7F5;
+  --gray-light: #F7F8FC;
+  --gray-mid: #8B8FA8;
+  --gray-border: #E2E5F0;
+  --white: #ffffff;
+  --text-dark: #1E2440;
+  --text-mid: #5A6080;
+}
+
+body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); font-size: 16px; line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { background: var(--navy-dark); color: rgba(255,255,255,0.75); font-size: 12.5px; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.topbar a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-bright); }
+.topbar-links { display: flex; gap: 24px; align-items: center; }
+.topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+.topbar-member-btn { background: var(--gold); color: white !important; padding: 4px 14px; border-radius: 4px; font-weight: 600; font-size: 12px; transition: background 0.2s !important; }
+.topbar-member-btn:hover { background: var(--gold-bright) !important; color: var(--navy-dark) !important; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--gray-border); position: sticky; top: 0; z-index: 200; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.logo-wrap { display: flex; align-items: center; text-decoration: none; }
+.logo-wrap img { height: 67px; width: auto; }
+nav { display: flex; align-items: center; gap: 2px; }
+nav a { color: var(--text-mid); text-decoration: none; font-size: 14px; font-weight: 500; padding: 7px 13px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+nav a:hover { color: var(--navy); background: var(--gray-light); }
+nav a.active { color: var(--navy); font-weight: 600; }
+.nav-cta { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%); color: white !important; padding: 9px 22px !important; border-radius: 50px !important; font-weight: 600 !important; margin-left: 10px; box-shadow: 0 4px 14px rgba(30,42,94,0.3); }
+.nav-cta:hover { box-shadow: 0 6px 20px rgba(30,42,94,0.4) !important; }
+
+/* PAGE HERO */
+.page-hero { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-mid) 100%); padding: 60px 40px; }
+.page-hero-inner { max-width: 1200px; margin: 0 auto; }
+.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+.breadcrumb a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gold-bright); }
+.page-hero-inner h1 { font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 700; color: white; margin-bottom: 10px; }
+.page-hero-inner p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 560px; }
+
+/* SEARCH BAR */
+.search-bar { background: white; border-bottom: 1px solid var(--gray-border); padding: 20px 40px; position: sticky; top: 78px; z-index: 100; }
+.search-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.search-input-wrap { flex: 1; min-width: 240px; position: relative; }
+.search-input-wrap input { width: 100%; padding: 10px 16px 10px 40px; border: 1.5px solid var(--gray-border); border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text-dark); outline: none; transition: border-color 0.2s; }
+.search-input-wrap input:focus { border-color: var(--navy); }
+.search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--gray-mid); }
+.filter-btn { padding: 10px 18px; border: 1.5px solid var(--gray-border); border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--text-mid); background: white; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s, color 0.2s; }
+.filter-btn:hover, .filter-btn.active { border-color: var(--navy); color: var(--navy); background: var(--gray-light); }
+.filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+.result-count { font-size: 13px; color: var(--gray-mid); margin-left: auto; white-space: nowrap; }
+
+/* MAIN */
+.page-body { max-width: 1200px; margin: 0 auto; padding: 48px 40px; }
+
+/* SECTION LABELS */
+.dir-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--gold-pale); display: flex; align-items: center; gap: 10px; }
+.dir-section-label span { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--navy); letter-spacing: 0; text-transform: none; }
+
+/* FEATURED GRID */
+.featured-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 52px; }
+.member-card { border: 1px solid var(--gray-border); border-radius: 14px; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; background: white; }
+.member-card:hover { box-shadow: 0 8px 28px rgba(30,42,94,0.1); transform: translateY(-2px); }
+.member-card.featured { border-color: var(--gold); border-width: 1.5px; }
+.member-card-top { padding: 20px 20px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+.member-avatar { width: 56px; height: 56px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: white; flex-shrink: 0; }
+.av-navy { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); }
+.av-teal { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%); }
+.av-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark); }
+.av-mid { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%); }
+.av-slate { background: linear-gradient(135deg, #4A5270 0%, #6B7AA0 100%); }
+.av-crimson { background: linear-gradient(135deg, #A8263A 0%, #C4384F 100%); }
+.av-purple { background: linear-gradient(135deg, #6B4FA0 0%, #8B6DC0 100%); }
+.av-green { background: linear-gradient(135deg, #2E7D4F 0%, #45A066 100%); }
+.featured-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--gold-pale); color: var(--gold-deep); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 50px; }
+.member-card-body { padding: 14px 20px 20px; }
+.member-name { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 6px; line-height: 1.3; }
+.member-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.member-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--gray-border); }
+.member-cat { font-size: 11px; font-weight: 600; color: var(--gray-mid); background: var(--gray-light); padding: 3px 10px; border-radius: 50px; }
+.btn-view { font-size: 12px; font-weight: 600; color: var(--navy); text-decoration: none; display: flex; align-items: center; gap: 4px; transition: color 0.2s; }
+.btn-view:hover { color: var(--gold-deep); }
+
+/* REGULAR GRID */
+.regular-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+.member-card-sm { border: 1px solid var(--gray-border); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.2s, border-color 0.2s; background: white; }
+.member-card-sm:hover { box-shadow: 0 4px 16px rgba(30,42,94,0.08); border-color: var(--gold-bright); }
+.member-card-sm-top { display: flex; gap: 12px; align-items: flex-start; }
+.member-avatar-sm { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
+.member-name-sm { font-size: 13.5px; font-weight: 600; color: var(--navy); line-height: 1.3; }
+.member-desc-sm { font-size: 12px; color: var(--text-mid); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.member-cat-sm { font-size: 11px; font-weight: 600; color: var(--gold-deep); background: var(--gold-pale); padding: 3px 10px; border-radius: 50px; display: inline-block; margin-top: 2px; }
+.status-open { color: var(--teal); font-size: 11px; font-weight: 600; }
+.status-closed { color: #A8263A; font-size: 11px; font-weight: 600; }
+
+/* JOIN CTA */
+.join-cta { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-mid) 100%); border-radius: 16px; padding: 40px; text-align: center; margin-top: 52px; }
+.join-cta h3 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: white; margin-bottom: 10px; }
+.join-cta p { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 24px; }
+.btn-gold { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark); padding: 13px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 16px rgba(201,146,42,0.4); transition: transform 0.15s, box-shadow 0.2s; }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,146,42,0.5); }
+
+/* FOOTER */
+.footer-accent { width: 100%; height: 3px; background: linear-gradient(90deg, var(--navy-light) 0%, var(--gold) 50%, var(--teal) 100%); }
+footer { background: var(--navy-dark); padding: 32px 40px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.footer-bottom a:hover { color: var(--gold-bright); }
+</style>
+<style>
+/* ===== MOBILE RESPONSIVE ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar { display: none; }
+
+  /* HEADER */
+  .header-inner { padding: 0 16px; height: 64px; }
+  .logo-wrap img { height: 48px; }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE NAV OVERLAY */
+  nav {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--navy-dark);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 250;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  nav.mobile-open { display: flex !important; }
+  nav a {
+    color: white !important;
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05) !important;
+    white-space: normal !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+  }
+  nav a:hover { background: rgba(255,255,255,0.12) !important; }
+  nav a.active { color: var(--gold-bright) !important; }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+    color: var(--navy-dark) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-close-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* HERO */
+  .hero { min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr !important; padding: 60px 20px 48px !important; gap: 0 !important; }
+  .hero h1 { font-size: 34px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; padding-top: 24px; margin-top: 8px; }
+  .hero-card { display: none !important; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+
+  /* TRUST */
+  .trust-strip { display: none; }
+
+  /* VALUE */
+  .value-strip { padding: 36px 16px; }
+  .value-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .value-card { padding: 18px 14px; }
+
+  /* SECTIONS */
+  section { padding: 52px 20px !important; }
+
+  /* EVENTS GRID */
+  .events-grid { grid-template-columns: 1fr !important; }
+  .events-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .events-divider + .events-section .section-inner { padding-top: 52px; }
+
+  /* MEMBERSHIP */
+  .tiers-grid { grid-template-columns: 1fr !important; }
+  .membership-section { padding: 52px 20px !important; }
+
+  /* ABOUT STRIP */
+  .about-grid { grid-template-columns: 1fr !important; gap: 32px; }
+  .about-photo-placeholder, .about-photo { height: 240px; border-radius: 12px; }
+  .about-badge { bottom: 12px; right: 12px; }
+  .about-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY */
+  .dir-grid { grid-template-columns: 1fr !important; }
+  .dir-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* CONTACT BAR */
+  .contact-bar { padding: 48px 20px; }
+  .contact-bar-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .contact-panel { min-width: auto; }
+
+  /* FOOTER */
+  footer { padding: 40px 16px 24px; }
+  .footer-top { grid-template-columns: 1fr !important; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* PAGE HERO */
+  .page-hero { padding: 44px 20px; }
+  .page-hero-inner h1 { font-size: 32px !important; }
+  .page-hero-inner { grid-template-columns: 1fr !important; }
+  .hero-cta-box { min-width: auto; width: 100%; }
+  .hero-range { flex-wrap: wrap; justify-content: center; }
+
+  /* EVENTS PAGE */
+  .page-body { grid-template-columns: 1fr !important; gap: 32px; padding: 32px 20px !important; }
+  .sidebar { position: static !important; top: auto; }
+  .event-row { grid-template-columns: 56px 1fr; gap: 12px; padding: 18px 0; }
+  .event-row:hover { margin: 0; padding: 18px 0; border-radius: 0; background: none; }
+  .event-date-box { width: 56px; height: 56px; border-radius: 8px; }
+  .event-date-box .dy { font-size: 22px; }
+  .month-heading { font-size: 22px; }
+  .event-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY PAGE */
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr 1fr !important; }
+  .search-bar { padding: 12px 16px; top: 64px; }
+  .search-inner { flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+  .result-count { display: none; }
+
+  /* ABOUT PAGE */
+  .mission-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .mission-photo { height: 260px; border-radius: 14px; }
+  .mission-photo img { border-radius: 14px; }
+  .mission-photo-badge { bottom: -10px; right: -10px; padding: 12px 16px; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; gap: 20px; }
+  .impact-num { font-size: 32px !important; }
+  .events-pillars { grid-template-columns: 1fr !important; }
+  .benefits-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+  .join-panel { position: static !important; }
+  .quick-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .quick-list { grid-template-columns: 1fr !important; }
+  .quick-benefits { padding: 52px 20px; }
+
+  /* JOIN PAGE */
+  .tiers-section, .benefits-section, .callout-section { padding: 52px 20px !important; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+
+  /* CONTACT PAGE */
+  .contact-cards { gap: 12px; }
+  .contact-card { padding: 16px; }
+  .map-placeholder { height: 160px; }
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* BOARD PAGE */
+  .officer-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .officer-photo { width: 100% !important; height: 240px; object-position: center 10%; }
+  .officer-body { padding: 20px 20px 24px; }
+  .officer-body::before { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 4px; }
+  .board-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .board-photo { width: 100% !important; height: 200px; object-position: center 10%; }
+  .board-body { padding: 18px 20px 20px; }
+
+  /* GENERAL */
+  .section-title { font-size: 28px !important; }
+}
+
+@media (max-width: 480px) {
+  .value-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr !important; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; }
+  .hero h1 { font-size: 28px !important; }
+  .hero-actions a { width: 100%; text-align: center; justify-content: center; }
+  .stat-num { font-size: 26px !important; }
+  .section-title { font-size: 24px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>📍 15720 Main St #210, Mill Creek, WA 98012 &nbsp;·&nbsp; Serving Mill Creek since 2000</span>
+    <div class="topbar-links">
+      <a href="tel:4256736200">(425) 673-6200</a>
+      <div class="topbar-divider"></div>
+      <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+      <div class="topbar-divider"></div>
+      <a href="#" class="topbar-member-btn">Member Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="events.html">Events</a>
+      <a href="directory.html" class="active">Member Directory</a>
+      <a href="contact.html">Contact</a>
+      <a href="join.html" class="nav-cta">Join the Chamber</a>
+    </nav>
+    <button class="nav-toggle" id="mobileNavToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;›&nbsp; Member Directory</div>
+    <h1>Member Directory</h1>
+    <p>Mill Creek's business community — connected through the Chamber. From local startups to established names, find the businesses that make this city thrive.</p>
+  </div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="search-bar">
+  <div class="search-inner">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search members by name or keyword...">
+    </div>
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Featured</button>
+    <button class="filter-btn">Restaurants</button>
+    <button class="filter-btn">Healthcare</button>
+    <button class="filter-btn">Financial</button>
+    <button class="filter-btn">Real Estate</button>
+    <span class="result-count">Showing 50+ members</span>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- FEATURED -->
+  <div class="dir-section-label">⭐ Featured Members <span>Visionary &amp; Premier Partners</span></div>
+  <div class="featured-grid">
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-gold">4Z</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">4Z Design, Marketing &amp; Printing</div>
+        <p class="member-desc">Custom apparel, promotional products, and high-impact print materials. Based in Snohomish, WA — a family-owned shop built on speed, creativity, and personal service. Your brand's new best friend (second only to Maui, their resident shop dog).</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Marketing &amp; Print</span>
+          <a href="https://4zdesign.com" class="btn-view" target="_blank">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-crimson">AM</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Active Martial Arts</div>
+        <p class="member-desc">Character development, leadership training, and life skills through martial arts. Focused on helping young people become the best version of themselves. Mill Creek martial arts and fitness for kids ages 4–17.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Fitness &amp; Youth</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-navy">AF</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Allstate Family First Insurance</div>
+        <p class="member-desc">Auto, home, recreation, business, and life insurance. Financial services including retirement and college savings planning.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Insurance</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-teal">CM</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">City of Mill Creek</div>
+        <p class="member-desc">A vibrant, safe, and friendly community with 10 parks, 23+ miles of nature trails, and an award-winning Town Center. A great destination for shopping, dining, and gathering.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Government</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-mid">GE</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Greg Elwin Real Estate / Raintown Realty</div>
+        <p class="member-desc">From law enforcement to real estate — Greg Elwin brings a tradition of community service to every transaction, with a focus on building lasting relationships and putting clients first at every stage.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Real Estate</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-purple">LT</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">LAF Tech, LLC</div>
+        <p class="member-desc">"Learn About Funny" — helping speakers, presenters, and entertainers leverage humor in powerful and effective ways. If you've ever wanted to captivate a room, LAF Tech shows you how.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Speaking &amp; Training</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-teal">MC</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Mill Creek Town Center</div>
+        <p class="member-desc">Over 70 stores — retail boutiques, anchor stores, restaurants, and services. One Street. Endless Experiences. A beautiful place to explore, shop, and dine in the heart of Mill Creek.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Shopping &amp; Retail</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-green">PW</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Paddywack</div>
+        <p class="member-desc">Single-location, family-owned independent natural pet food store. Husband-and-wife owners Adam and Shane bring 35+ years of combined experience and a genuine pledge to the animals and families they serve.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Pet Services</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="member-card featured">
+      <div class="member-card-top">
+        <div class="member-avatar av-navy">PB</div>
+        <span class="featured-badge">⭐ Featured</span>
+      </div>
+      <div class="member-card-body">
+        <div class="member-name">Peoples Bank</div>
+        <p class="member-desc">Serving the community for over 100 years. Locally owned and operated with $2.4 billion in assets and 23 locations across Washington State. A true community bank distinguished by unwavering commitment to customers and neighbors.</p>
+        <div class="member-card-footer">
+          <span class="member-cat">Banking</span>
+          <a href="#" class="btn-view">Visit →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ALL MEMBERS -->
+  <div class="dir-section-label" style="margin-top: 16px;">All Members <span>A – D</span></div>
+  <div class="regular-grid">
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">1S</div>
+        <div class="member-name-sm">1st Security Bank</div>
+      </div>
+      <p class="member-desc-sm">Your neighborhood bank — showing up to help your community grow and thrive.</p>
+      <span class="member-cat-sm">Banking</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">36</div>
+        <div class="member-name-sm">360 Dental of Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Remarkable service with up-to-date procedures and the latest technology in dental care.</p>
+      <span class="member-cat-sm">Healthcare</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">4S</div>
+        <div class="member-name-sm">4 Stitch Brewing Co.</div>
+      </div>
+      <p class="member-desc-sm">Family-friendly craft brewery and taproom. Handcrafted beers in a warm, welcoming atmosphere.</p>
+      <span class="member-cat-sm">Brewery</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">AC</div>
+        <div class="member-name-sm">A Canine Experience Dog Training</div>
+      </div>
+      <p class="member-desc-sm">Personalized dog training, boarding, and daycare. Expert care for your furry family members.</p>
+      <span class="member-cat-sm">Pet Services</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-mid">AR</div>
+        <div class="member-name-sm">Accelerated Results 365</div>
+      </div>
+      <p class="member-desc-sm">Strengthening back-office operations and boosting growth potential for dynamic businesses.</p>
+      <span class="member-cat-sm">Consulting</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">AC</div>
+        <div class="member-name-sm">Ace Corrective Chiropractic</div>
+      </div>
+      <p class="member-desc-sm">Chiropractic care with laser therapy, corrective exercises, and nutrition. Serving Mill Creek since 1995.</p>
+      <span class="member-cat-sm">Healthcare</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-purple">AG</div>
+        <div class="member-name-sm">Agrii Party &amp; Events</div>
+      </div>
+      <p class="member-desc-sm">Award-winning event rentals since 2011. Tents, décor, and full event setup for any occasion.</p>
+      <span class="member-cat-sm">Events</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">AW</div>
+        <div class="member-name-sm">All Wheel Drive Auto</div>
+      </div>
+      <p class="member-desc-sm">Independent Subaru and Toyota service and repair in Bothell and Kirkland. Free loaners available.</p>
+      <span class="member-cat-sm">Automotive</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-mid">AE</div>
+        <div class="member-name-sm">Allure Event Space</div>
+      </div>
+      <p class="member-desc-sm">A venue built with intention and heart — creating unforgettable experiences and precious memories.</p>
+      <span class="member-cat-sm">Venue</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">AC</div>
+        <div class="member-name-sm">Angela Cohen – Guild Mortgage</div>
+      </div>
+      <p class="member-desc-sm">Your Mortgage Genie — creating solutions to help people achieve the dream of homeownership.</p>
+      <span class="member-cat-sm">Mortgage</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">AP</div>
+        <div class="member-name-sm">Applebee's Grill + Bar</div>
+      </div>
+      <p class="member-desc-sm">Full service casual dining. Famous for Boneless Wings, Burgers, Steaks, and great drinks.</p>
+      <span class="member-cat-sm">Restaurant</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">AB</div>
+        <div class="member-name-sm">AR365 Books</div>
+      </div>
+      <p class="member-desc-sm">Reliable bookkeeping solutions tailored to small and medium-sized businesses.</p>
+      <span class="member-cat-sm">Bookkeeping</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">AF</div>
+        <div class="member-name-sm">Artisan Custom Framing</div>
+      </div>
+      <p class="member-desc-sm">Expert framing to enhance and preserve your art — originals, posters, and family heirlooms.</p>
+      <span class="member-cat-sm">Art &amp; Framing</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">AZ</div>
+        <div class="member-name-sm">Azul Restaurant and Lounge</div>
+      </div>
+      <p class="member-desc-sm">Your neighborhood Latin American bistro — vibrant atmosphere, fresh ingredients, incredible staff.</p>
+      <span class="member-cat-sm">Restaurant</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-mid">BB</div>
+        <div class="member-name-sm">Banner Bank</div>
+      </div>
+      <p class="member-desc-sm">Full-service financial institution built on shared integrity, strong client relationships, and community.</p>
+      <span class="member-cat-sm">Banking</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">B3</div>
+        <div class="member-name-sm">barre3</div>
+      </div>
+      <p class="member-desc-sm">Strength, cardio, and mindfulness combined. Low-impact isometric moves with high-impact results.</p>
+      <span class="member-cat-sm">Fitness</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">BH</div>
+        <div class="member-name-sm">Bassett Home Heating &amp; Cooling</div>
+      </div>
+      <p class="member-desc-sm">Family owned with 40+ years of experience. Heating and cooling specialists who put customers first.</p>
+      <span class="member-cat-sm">Home Services</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">BC</div>
+        <div class="member-name-sm">Bear Creek Consulting</div>
+      </div>
+      <p class="member-desc-sm">Founded by an entrepreneur who built and sold his own company — guiding others through growth.</p>
+      <span class="member-cat-sm">Consulting</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">BL</div>
+        <div class="member-name-sm">Becca Locke – Locke Real Estate</div>
+      </div>
+      <p class="member-desc-sm">Top 5% producing broker, 500+ homes sold. 20+ years serving Mill Creek and greater King/Snohomish.</p>
+      <span class="member-cat-sm">Real Estate</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">BE</div>
+        <div class="member-name-sm">BECU – Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Credit union built on "people helping people" since 1935. Proud to serve the Mill Creek community.</p>
+      <span class="member-cat-sm">Credit Union</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-purple">BX</div>
+        <div class="member-name-sm">BizX</div>
+      </div>
+      <p class="member-desc-sm">Digital barter system connecting 7,000+ businesses — reach new customers and improve cash flow.</p>
+      <span class="member-cat-sm">Business Network</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">BO</div>
+        <div class="member-name-sm">Blazing Onion Burger Co.</div>
+      </div>
+      <p class="member-desc-sm">Hand-crafted gourmet burgers with local ingredients since 2007. Born right here in Mill Creek.</p>
+      <span class="member-cat-sm">Restaurant</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">BV</div>
+        <div class="member-name-sm">Bold Low Voltage</div>
+      </div>
+      <p class="member-desc-sm">Leading low voltage electrical contractor — telecomm, security, EV charging, fire alarm, and more.</p>
+      <span class="member-cat-sm">Electrical</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-green">BG</div>
+        <div class="member-name-sm">Boys &amp; Girls Clubs of Snohomish County</div>
+      </div>
+      <p class="member-desc-sm">Serving 29,000+ youth ages 5–18 across 25 clubs. Building great futures through safe, positive spaces.</p>
+      <span class="member-cat-sm">Nonprofit</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">BB</div>
+        <div class="member-name-sm">Budget Blinds of Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Locally owned franchise with 20+ years serving the community. 4.9 Google rating.</p>
+      <span class="member-cat-sm">Home Services</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">CH</div>
+        <div class="member-name-sm">Carbon Health Urgent Care</div>
+      </div>
+      <p class="member-desc-sm">Modern urgent care combining advanced technology with expert, transparent, accessible care.</p>
+      <span class="member-cat-sm">Healthcare</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">CS</div>
+        <div class="member-name-sm">Cascade Stride</div>
+      </div>
+      <p class="member-desc-sm">Local races bringing runners and walkers together. Competitive and casual — all are welcome.</p>
+      <span class="member-cat-sm">Recreation</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">CF</div>
+        <div class="member-name-sm">Chick-fil-A</div>
+      </div>
+      <p class="member-desc-sm">Freshly prepared food with quality ingredients every day of the week (except Sunday, of course).</p>
+      <span class="member-cat-sm">Restaurant</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-mid">CC</div>
+        <div class="member-name-sm">China City – Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Mandarin, Szechuan, and Hunan cuisine. Attentive service and a menu for the whole family.</p>
+      <span class="member-cat-sm">Restaurant</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">CS</div>
+        <div class="member-name-sm">Chinook Services</div>
+      </div>
+      <p class="member-desc-sm">Top-rated exterior cleaning since 2001 — roof, gutters, pressure washing, windows, carpet.</p>
+      <span class="member-cat-sm">Home Services</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">CH</div>
+        <div class="member-name-sm">Christine Hecker Homes – eXp Realty</div>
+      </div>
+      <p class="member-desc-sm">Data-backed market valuations and smart prep strategies. Modern marketing for confident sellers.</p>
+      <span class="member-cat-sm">Real Estate</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-green">CK</div>
+        <div class="member-name-sm">Clothes For Kids</div>
+      </div>
+      <p class="member-desc-sm">Since 1984, meeting clothing needs of low-income children in Snohomish County so they arrive at school ready to learn.</p>
+      <span class="member-cat-sm">Nonprofit</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">CM</div>
+        <div class="member-name-sm">CMG Home Loans</div>
+      </div>
+      <p class="member-desc-sm">Local service with national resources. 17,000+ Zillow reviews. On Main Street in Town Center.</p>
+      <span class="member-cat-sm">Mortgage</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">CB</div>
+        <div class="member-name-sm">Coastal Community Bank</div>
+      </div>
+      <p class="member-desc-sm">Banking built on relationships and trust. Local bankers who live in the communities they serve.</p>
+      <span class="member-cat-sm">Banking</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-purple">CH</div>
+        <div class="member-name-sm">Cocoon House</div>
+      </div>
+      <p class="member-desc-sm">Preventing and ending youth homelessness in Snohomish County since 1991. Housing, outreach, and family support.</p>
+      <span class="member-cat-sm">Nonprofit</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-slate">CG</div>
+        <div class="member-name-sm">Cogir of Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Independent living, assisted living, and respite care — rethinking senior living in Mill Creek.</p>
+      <span class="member-cat-sm">Senior Living</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-navy">CB</div>
+        <div class="member-name-sm">Coldwell Banker Bain – Mill Creek</div>
+      </div>
+      <p class="member-desc-sm">Serving Seattle, Mill Creek, Snohomish County, and greater King County real estate markets.</p>
+      <span class="member-cat-sm">Real Estate</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-teal">CT</div>
+        <div class="member-name-sm">Community Transit</div>
+      </div>
+      <p class="member-desc-sm">40+ years connecting Puget Sound. Swift Bus Rapid Transit, vanpool, and regional transportation options.</p>
+      <span class="member-cat-sm">Transportation</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-crimson">CF</div>
+        <div class="member-name-sm">CrossFunction Sports Recovery</div>
+      </div>
+      <p class="member-desc-sm">Full-service sports recovery center founded by a former Olympic hopeful. For athletes and everyday movers alike.</p>
+      <span class="member-cat-sm">Health &amp; Wellness</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-gold">CS</div>
+        <div class="member-name-sm">Crossroad Sign Studio</div>
+      </div>
+      <p class="member-desc-sm">National creative agency designing, building, and servicing all types of business signs and graphics.</p>
+      <span class="member-cat-sm">Signs &amp; Graphics</span>
+    </div>
+
+    <div class="member-card-sm">
+      <div class="member-card-sm-top">
+        <div class="member-avatar-sm av-mid">DD</div>
+        <div class="member-name-sm">Disruption Dynamics</div>
+      </div>
+      <p class="member-desc-sm">Management consulting for small businesses — adapt fast, do more with less, thrive through change.</p>
+      <span class="member-cat-sm">Consulting</span>
+    </div>
+
+  </div>
+
+  <!-- JOIN CTA -->
+  <div class="join-cta">
+    <h3>Not listed yet?</h3>
+    <p>Join the Mill Creek Chamber and get your business in front of the community.</p>
+    <a href="join.html" class="btn-gold">Become a Member →</a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer-accent"></div>
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Mill Creek Chamber of Commerce · All rights reserved.</span>
+    <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a></span>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  var toggle = document.getElementById('mobileNavToggle');
+  var nav = document.querySelector('nav');
+  if (!toggle || !nav) return;
+
+  // Add close button
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close-btn';
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function openNav() {
+    nav.classList.add('mobile-open');
+    toggle.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    nav.classList.contains('mobile-open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeNav);
+  });
+})();
+</script>
+
+</body>
+</html>

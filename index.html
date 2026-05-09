@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mill Creek Chamber of Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #2D3A7C;
+  --navy-dark: #1E2A5E;
+  --navy-mid: #3D4FA0;
+  --navy-light: #5468B8;
+  --gold: #C9922A;
+  --gold-bright: #E8B84B;
+  --gold-pale: #FDF6E8;
+  --gold-deep: #9C6B15;
+  --teal: #1A7A6E;
+  --teal-light: #22A394;
+  --teal-pale: #E3F7F5;
+  --crimson: #A8263A;
+  --crimson-pale: #FCEEF0;
+  --slate: #4A5270;
+  --gray-light: #F7F8FC;
+  --gray-mid: #8B8FA8;
+  --gray-border: #E2E5F0;
+  --white: #ffffff;
+  --text-dark: #1E2440;
+  --text-mid: #5A6080;
+}
+
+body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); font-size: 16px; line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { background: var(--navy-dark); color: rgba(255,255,255,0.75); font-size: 12.5px; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.topbar a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-bright); }
+.topbar-links { display: flex; gap: 24px; align-items: center; }
+.topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+.topbar-member-btn {
+  background: var(--gold);
+  color: white !important;
+  padding: 4px 14px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  transition: background 0.2s !important;
+}
+.topbar-member-btn:hover { background: var(--gold-bright) !important; color: var(--navy-dark) !important; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--gray-border); position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px); }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.logo-wrap { display: flex; align-items: center; gap: 0; text-decoration: none; }
+.logo-wrap img { height: 67px; width: auto; }
+nav { display: flex; align-items: center; gap: 2px; }
+nav a { color: var(--text-mid); text-decoration: none; font-size: 14px; font-weight: 500; padding: 7px 13px; border-radius: 6px; transition: color 0.2s, background 0.2s; letter-spacing: 0.01em; white-space: nowrap; }
+nav a:hover { color: var(--navy); background: var(--gray-light); }
+
+/* NAV CTA - Pill gradient */
+.nav-cta {
+  background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%);
+  color: white !important;
+  padding: 9px 22px !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  margin-left: 10px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(30,42,94,0.3);
+  transition: box-shadow 0.2s, transform 0.15s !important;
+  position: relative;
+  overflow: hidden;
+}
+.nav-cta::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); opacity: 0; transition: opacity 0.3s; }
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(30,42,94,0.4) !important; background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%) !important; }
+.nav-cta:hover::after { opacity: 1; }
+.nav-cta span { position: relative; z-index: 1; }
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('hero.png');
+  background-size: cover;
+  background-position: center 40%;
+  filter: brightness(0.55) saturate(0.9);
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(30,42,94,0.78) 0%, rgba(45,58,124,0.55) 50%, rgba(61,79,160,0.25) 100%);
+}
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 40px 90px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,146,42,0.18);
+  border: 1px solid rgba(201,146,42,0.45);
+  color: var(--gold-bright);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 50px;
+  margin-bottom: 22px;
+}
+.hero-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold-bright); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  color: white;
+  letter-spacing: -0.01em;
+}
+.hero h1 em { color: var(--gold-bright); font-style: italic; }
+.hero-sub { font-size: 18px; color: rgba(255,255,255,0.78); line-height: 1.75; margin-bottom: 38px; font-weight: 300; max-width: 500px; }
+
+/* BUTTON SYSTEM */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+  color: var(--navy-dark);
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 24px rgba(201,146,42,0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-gold::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--gold-bright) 0%, #F5D07A 100%); opacity: 0; transition: opacity 0.3s; }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(201,146,42,0.55); }
+.btn-gold:hover::before { opacity: 1; }
+.btn-gold span, .btn-gold svg { position: relative; z-index: 1; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 14.5px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.7); }
+
+.btn-navy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--navy);
+  color: white;
+  padding: 13px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(30,42,94,0.25);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.btn-navy:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(30,42,94,0.35); }
+
+.btn-teal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(26,122,110,0.3);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-teal:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,122,110,0.4); }
+
+.btn-outline-navy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--navy);
+  border: 2px solid var(--navy);
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-outline-navy:hover { background: var(--navy); color: white; }
+
+.btn-gold-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold);
+  color: white;
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-gold-sm:hover { background: var(--gold-bright); color: var(--navy-dark); }
+
+.btn-text-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-text-gold:hover { border-color: var(--gold); color: var(--gold-deep); }
+
+.btn-text-navy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 13.5px;
+  text-decoration: none;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+.btn-text-navy:hover { color: var(--gold-deep); }
+
+.btn-crimson {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--crimson) 0%, #C4384F 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(168,38,58,0.28);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-crimson:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(168,38,58,0.4); }
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+
+/* HERO STATS */
+.hero-stats { display: flex; gap: 36px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.12); }
+.stat-item { }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--gold-bright); display: block; line-height: 1; }
+.stat-label { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; display: block; }
+
+/* HERO CARD */
+.hero-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 20px;
+  padding: 28px;
+  backdrop-filter: blur(16px);
+}
+.hero-card-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-bright); margin-bottom: 18px; }
+.upcoming-event { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.upcoming-event:last-child { border-bottom: none; padding-bottom: 0; }
+.event-date-box { background: var(--gold); border-radius: 10px; min-width: 48px; width: 48px; height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+.event-date-box .mo { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
+.event-date-box .dy { font-size: 22px; font-weight: 700; line-height: 1.1; }
+.event-info h4 { font-size: 13.5px; font-weight: 600; color: white; margin-bottom: 2px; }
+.event-info p { font-size: 11.5px; color: rgba(255,255,255,0.5); }
+.hero-card-footer { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; }
+
+/* TRUST STRIP */
+.trust-strip { background: var(--gold-pale); border-top: 1px solid rgba(201,146,42,0.2); border-bottom: 1px solid rgba(201,146,42,0.2); padding: 18px 40px; }
+.trust-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+.trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gold-deep); font-weight: 600; }
+.trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+
+/* VALUE STRIP */
+.value-strip { background: var(--gray-light); padding: 60px 40px; }
+.value-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.value-card {
+  background: white;
+  border: 1px solid var(--gray-border);
+  border-radius: 16px;
+  padding: 28px 22px;
+  text-align: center;
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.value-card::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 100%); transform: scaleX(0); transition: transform 0.3s; }
+.value-card:hover { box-shadow: 0 12px 36px rgba(30,42,94,0.1); transform: translateY(-3px); border-color: var(--gold-bright); }
+.value-card:hover::before { transform: scaleX(1); }
+.value-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 24px; }
+.vi-1 { background: linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 100%); }
+.vi-2 { background: linear-gradient(135deg, var(--gold-pale) 0%, #FCE4A8 100%); }
+.vi-3 { background: linear-gradient(135deg, var(--teal-pale) 0%, #B2DFDB 100%); }
+.vi-4 { background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD9 100%); }
+.value-card h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.value-card p { font-size: 13px; color: var(--text-mid); line-height: 1.65; }
+
+/* SECTIONS */
+section { padding: 90px 40px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 14px; }
+.section-sub { font-size: 17px; color: var(--text-mid); max-width: 560px; line-height: 1.75; }
+
+/* EVENTS */
+.events-section { background: white; padding-top: 0; }
+.events-divider { height: 5px; background: linear-gradient(90deg, var(--navy) 0%, var(--navy-light) 40%, var(--gold) 70%, var(--gold-bright) 100%); }
+.events-section .section-inner { padding-top: 80px; }
+.events-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+.events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.event-card { border-radius: 16px; overflow: hidden; border: 1px solid var(--gray-border); transition: box-shadow 0.25s, transform 0.25s; }
+.event-card:hover { box-shadow: 0 16px 48px rgba(30,42,94,0.12); transform: translateY(-3px); }
+.event-card-top { padding: 22px 24px; display: flex; align-items: center; gap: 16px; }
+.ec-navy { background: var(--navy); }
+.ec-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); }
+.ec-teal { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%); }
+.event-date-large { text-align: center; color: white; min-width: 52px; }
+.event-date-large .mo { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.8; }
+.event-date-large .dy { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; line-height: 1; }
+.event-card-top-info h3 { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
+.event-card-top-info p { font-size: 12px; color: rgba(255,255,255,0.65); }
+.event-card-body { padding: 22px 24px; }
+.event-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 50px; margin-bottom: 12px; letter-spacing: 0.04em; }
+.et-community { background: rgba(30,42,94,0.07); color: var(--navy); }
+.et-member { background: var(--gold-pale); color: var(--gold-deep); }
+.et-free { background: var(--teal-pale); color: var(--teal); }
+.event-card-body p { font-size: 13.5px; color: var(--text-mid); margin-bottom: 16px; line-height: 1.65; }
+
+/* MEMBERSHIP */
+.membership-section { background: #3D4FA0; padding: 90px 40px; }
+.membership-section .section-title { color: white; }
+.membership-section .section-sub { color: rgba(255,255,255,0.75); max-width: 600px; }
+.membership-section .section-label { color: var(--gold-bright); }
+.tiers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; }
+.tier-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 30px 24px;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.tier-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); }
+.tier-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(201,146,42,0.4); transform: translateY(-2px); }
+.tier-featured {
+  background: rgba(201,146,42,0.1);
+  border-color: rgba(201,146,42,0.55);
+}
+.tier-featured::before { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%); }
+.tier-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 18px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+.tier-featured .tier-badge { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark); }
+.tier-name { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: white; margin-bottom: 6px; }
+.tier-desc { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 20px; line-height: 1.5; }
+.tier-features { list-style: none; margin-bottom: 26px; }
+.tier-features li { font-size: 13px; color: rgba(255,255,255,0.65); padding: 5px 0; display: flex; gap: 8px; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tier-features li:last-child { border-bottom: none; }
+.tier-check { color: var(--gold-bright); font-size: 13px; flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+
+/* Tier buttons - each different */
+.tier-btn-default {
+  display: block; text-align: center; padding: 11px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.75);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.tier-btn-default:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.5); color: white; }
+.tier-btn-gold {
+  display: block; text-align: center; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark);
+  box-shadow: 0 4px 16px rgba(201,146,42,0.4); transition: box-shadow 0.2s, transform 0.15s;
+}
+.tier-btn-gold:hover { box-shadow: 0 8px 24px rgba(201,146,42,0.55); transform: translateY(-1px); }
+.tier-btn-teal {
+  display: block; text-align: center; padding: 11px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%); color: white;
+  box-shadow: 0 4px 14px rgba(26,122,110,0.35); transition: box-shadow 0.2s, transform 0.15s;
+}
+.tier-btn-teal:hover { box-shadow: 0 8px 22px rgba(26,122,110,0.5); transform: translateY(-1px); }
+.tier-btn-light {
+  display: block; text-align: center; padding: 11px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;
+  background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.15);
+  transition: background 0.2s;
+}
+.tier-btn-light:hover { background: rgba(255,255,255,0.18); }
+
+/* ABOUT */
+.about-section { background: var(--gray-light); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.about-img-wrap { position: relative; }
+.about-photo {
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  object-fit: cover;
+  display: block;
+}
+.about-photo-placeholder {
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 60%, var(--teal) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  gap: 12px;
+}
+.about-photo-placeholder .ph-icon { font-size: 48px; opacity: 0.6; }
+.about-badge {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  background: white;
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 8px 32px rgba(30,42,94,0.15);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid var(--gray-border);
+}
+.badge-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--navy); }
+.badge-label { font-size: 12px; color: var(--gray-mid); line-height: 1.4; }
+.badge-icon { font-size: 22px; }
+.about-text { }
+.about-text .section-sub { max-width: 100%; margin-bottom: 20px; }
+.about-text blockquote {
+  border-left: 3px solid var(--gold);
+  padding-left: 18px;
+  margin: 24px 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--navy);
+  line-height: 1.6;
+}
+.about-actions { display: flex; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+
+/* DIRECTORY */
+.directory-section { background: white; }
+.dir-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; }
+.dir-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dir-card { border: 1px solid var(--gray-border); border-radius: 12px; padding: 20px; display: flex; gap: 14px; align-items: flex-start; transition: box-shadow 0.2s, border-color 0.2s; cursor: pointer; }
+.dir-card:hover { box-shadow: 0 6px 20px rgba(30,42,94,0.09); border-color: var(--gold-bright); }
+.dir-avatar { width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: white; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+.da-1 { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); }
+.da-2 { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%); }
+.da-3 { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark) !important; }
+.da-4 { background: linear-gradient(135deg, var(--crimson) 0%, #C4384F 100%); }
+.da-5 { background: linear-gradient(135deg, #6B4FA0 0%, #8B6DC0 100%); }
+.da-6 { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--teal) 100%); }
+.dir-info h4 { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+.dir-info p { font-size: 12px; color: var(--gray-mid); line-height: 1.5; }
+.dir-cat { display: inline-block; margin-top: 7px; font-size: 11px; background: var(--gold-pale); color: var(--gold-deep); padding: 3px 10px; border-radius: 50px; font-weight: 600; }
+.dir-footer { text-align: center; margin-top: 40px; }
+
+/* CONTACT BAR */
+.contact-bar { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 50%, var(--navy-mid) 100%); padding: 70px 40px; position: relative; overflow: hidden; }
+.contact-bar::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(201,146,42,0.07); }
+.contact-bar::after { content: ''; position: absolute; bottom: -80px; left: 100px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.03); }
+.contact-bar-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; position: relative; z-index: 2; }
+.contact-bar h2 { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: white; margin-bottom: 10px; }
+.contact-bar > div > p { font-size: 16px; color: rgba(255,255,255,0.6); max-width: 480px; }
+.contact-panel { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 28px; min-width: 280px; backdrop-filter: blur(8px); }
+.contact-panel-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-bright); margin-bottom: 18px; }
+.contact-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
+.contact-icon { width: 34px; height: 34px; background: rgba(255,255,255,0.08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.contact-panel-actions { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+
+/* FOOTER */
+footer { background: var(--navy-dark); color: rgba(255,255,255,0.55); padding: 60px 40px 28px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2.2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 24px; }
+.footer-brand img { height: 50px; width: auto; margin-bottom: 16px; filter: brightness(0) invert(1) opacity(0.6); }
+.footer-brand p { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.45); margin-bottom: 20px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; color: white; transition: background 0.2s, border-color 0.2s; }
+.social-btn:hover { background: rgba(201,146,42,0.2); border-color: rgba(201,146,42,0.4); }
+.footer-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 16px; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 9px; }
+.footer-col ul li a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 13px; transition: color 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.footer-col ul li a:hover { color: var(--gold-bright); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+.footer-bottom a:hover { color: var(--gold-bright); }
+.footer-accent { width: 100%; height: 3px; background: linear-gradient(90deg, var(--navy-light) 0%, var(--gold) 50%, var(--teal) 100%); margin-bottom: 0; }
+</style>
+<style>
+/* ===== MOBILE RESPONSIVE ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar { display: none; }
+
+  /* HEADER */
+  .header-inner { padding: 0 16px; height: 64px; }
+  .logo-wrap img { height: 48px; }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE NAV OVERLAY */
+  nav {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--navy-dark);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 250;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  nav.mobile-open { display: flex !important; }
+  nav a {
+    color: white !important;
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05) !important;
+    white-space: normal !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+  }
+  nav a:hover { background: rgba(255,255,255,0.12) !important; }
+  nav a.active { color: var(--gold-bright) !important; }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+    color: var(--navy-dark) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-close-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* HERO */
+  .hero { min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr !important; padding: 60px 20px 48px !important; gap: 0 !important; }
+  .hero h1 { font-size: 34px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; padding-top: 24px; margin-top: 8px; }
+  .hero-card { display: none !important; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+
+  /* TRUST */
+  .trust-strip { display: none; }
+
+  /* VALUE */
+  .value-strip { padding: 36px 16px; }
+  .value-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .value-card { padding: 18px 14px; }
+
+  /* SECTIONS */
+  section { padding: 52px 20px !important; }
+
+  /* EVENTS GRID */
+  .events-grid { grid-template-columns: 1fr !important; }
+  .events-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .events-divider + .events-section .section-inner { padding-top: 52px; }
+
+  /* MEMBERSHIP */
+  .tiers-grid { grid-template-columns: 1fr !important; }
+  .membership-section { padding: 52px 20px !important; }
+
+  /* ABOUT STRIP */
+  .about-grid { grid-template-columns: 1fr !important; gap: 32px; }
+  .about-photo-placeholder, .about-photo { height: 240px; border-radius: 12px; }
+  .about-badge { bottom: 12px; right: 12px; }
+  .about-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY */
+  .dir-grid { grid-template-columns: 1fr !important; }
+  .dir-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* CONTACT BAR */
+  .contact-bar { padding: 48px 20px; }
+  .contact-bar-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .contact-panel { min-width: auto; }
+
+  /* FOOTER */
+  footer { padding: 40px 16px 24px; }
+  .footer-top { grid-template-columns: 1fr !important; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* PAGE HERO */
+  .page-hero { padding: 44px 20px; }
+  .page-hero-inner h1 { font-size: 32px !important; }
+  .page-hero-inner { grid-template-columns: 1fr !important; }
+  .hero-cta-box { min-width: auto; width: 100%; }
+  .hero-range { flex-wrap: wrap; justify-content: center; }
+
+  /* EVENTS PAGE */
+  .page-body { grid-template-columns: 1fr !important; gap: 32px; padding: 32px 20px !important; }
+  .sidebar { position: static !important; top: auto; }
+  .event-row { grid-template-columns: 56px 1fr; gap: 12px; padding: 18px 0; }
+  .event-row:hover { margin: 0; padding: 18px 0; border-radius: 0; background: none; }
+  .event-date-box { width: 56px; height: 56px; border-radius: 8px; }
+  .event-date-box .dy { font-size: 22px; }
+  .month-heading { font-size: 22px; }
+  .event-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY PAGE */
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr 1fr !important; }
+  .search-bar { padding: 12px 16px; top: 64px; }
+  .search-inner { flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+  .result-count { display: none; }
+
+  /* ABOUT PAGE */
+  .mission-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .mission-photo { height: 260px; border-radius: 14px; }
+  .mission-photo img { border-radius: 14px; }
+  .mission-photo-badge { bottom: -10px; right: -10px; padding: 12px 16px; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; gap: 20px; }
+  .impact-num { font-size: 32px !important; }
+  .events-pillars { grid-template-columns: 1fr !important; }
+  .benefits-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+  .join-panel { position: static !important; }
+  .quick-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .quick-list { grid-template-columns: 1fr !important; }
+  .quick-benefits { padding: 52px 20px; }
+
+  /* JOIN PAGE */
+  .tiers-section, .benefits-section, .callout-section { padding: 52px 20px !important; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+
+  /* CONTACT PAGE */
+  .contact-cards { gap: 12px; }
+  .contact-card { padding: 16px; }
+  .map-placeholder { height: 160px; }
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* BOARD PAGE */
+  .officer-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .officer-photo { width: 100% !important; height: 240px; object-position: center 10%; }
+  .officer-body { padding: 20px 20px 24px; }
+  .officer-body::before { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 4px; }
+  .board-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .board-photo { width: 100% !important; height: 200px; object-position: center 10%; }
+  .board-body { padding: 18px 20px 20px; }
+
+  /* GENERAL */
+  .section-title { font-size: 28px !important; }
+}
+
+@media (max-width: 480px) {
+  .value-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr !important; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; }
+  .hero h1 { font-size: 28px !important; }
+  .hero-actions a { width: 100%; text-align: center; justify-content: center; }
+  .stat-num { font-size: 26px !important; }
+  .section-title { font-size: 24px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>📍 15720 Main St #210, Mill Creek, WA 98012 &nbsp;·&nbsp; Serving Mill Creek since 2000</span>
+    <div class="topbar-links">
+      <a href="tel:4256736200">(425) 673-6200</a>
+      <div class="topbar-divider"></div>
+      <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+      <div class="topbar-divider"></div>
+      <a href="#" class="topbar-member-btn">Member Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="events.html">Events</a>
+      <a href="directory.html">Member Directory</a>
+      <a href="contact.html">Contact</a>
+      <a href="join.html" class="nav-cta"><span>Join the Chamber</span></a>
+    </nav>
+    <button class="nav-toggle" id="mobileNavToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Mill Creek, Washington</div>
+      <h1>Where <em>Mill Creek</em><br>Business Thrives</h1>
+      <p class="hero-sub">Connecting local businesses, amplifying community voices, and building the relationships that make Mill Creek a place people are proud to call home.</p>
+      <div class="hero-actions">
+        <a href="join.html" class="btn-gold"><span>Become a Member</span></a>
+        <a href="events.html" class="btn-ghost">Explore Events →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">200+</span>
+          <span class="stat-label">Member Businesses</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">25+</span>
+          <span class="stat-label">Annual Events</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">25th</span>
+          <span class="stat-label">Annual Festival 2026</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-label">Upcoming Events</div>
+      <div class="upcoming-event">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">12</span>
+        </div>
+        <div class="event-info">
+          <h4>Coffee Connections</h4>
+          <p>8:00am · Ace Corrective Chiropractic</p>
+        </div>
+      </div>
+      <div class="upcoming-event">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">19</span>
+        </div>
+        <div class="event-info">
+          <h4>May Breakfast Meeting</h4>
+          <p>8:00–9:30am · Tapped Public House</p>
+        </div>
+      </div>
+      <div class="upcoming-event">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">21</span>
+        </div>
+        <div class="event-info">
+          <h4>Third Thursday</h4>
+          <p>4:30pm · Home Plate</p>
+        </div>
+      </div>
+      <div class="hero-card-footer">
+        <a href="events.html" class="btn-gold-sm">View All Events →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item">🤝 200+ Member Businesses</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">📣 City Advocacy &amp; Representation</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">🎉 25th Annual Festival — July 11 &amp; 12, 2026</div>
+    <div class="trust-dot"></div>
+    <div class="trust-item">🏆 Preferred Marketing Supplier Network</div>
+  </div>
+</div>
+
+<!-- VALUE STRIP -->
+<div class="value-strip">
+  <div class="value-grid">
+    <div class="value-card">
+      <div class="value-icon vi-1">🤝</div>
+      <h3>Network &amp; Connect</h3>
+      <p>Build meaningful relationships with business owners, city officials, and community leaders at monthly events.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon vi-2">📣</div>
+      <h3>Advocacy &amp; Voice</h3>
+      <p>We represent your business interests with local government and advocate on your behalf where it counts.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon vi-3">📈</div>
+      <h3>Grow Your Business</h3>
+      <p>Access referrals, directory visibility, showcase tables, and speaking opportunities that drive real growth.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-icon vi-4">🏘️</div>
+      <h3>Strengthen Community</h3>
+      <p>Be part of events and initiatives — from ribbon cuttings to the annual festival — that define Mill Creek.</p>
+    </div>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="events-divider"></div>
+<section class="events-section">
+  <div class="section-inner">
+    <div class="events-header">
+      <div>
+        <div class="section-label">What's Happening</div>
+        <h2 class="section-title">Upcoming Events</h2>
+      </div>
+      <a href="events.html" class="btn-text-navy">View All Events →</a>
+    </div>
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-card-top ec-teal">
+          <div class="event-date-large">
+            <div class="mo">May</div>
+            <div class="dy">12</div>
+          </div>
+          <div class="event-card-top-info">
+            <h3>Coffee Connections</h3>
+            <p>Ace Corrective Chiropractic</p>
+          </div>
+        </div>
+        <div class="event-card-body">
+          <span class="event-tag et-free">Free to Attend</span>
+          <p>Start your morning right — casual networking over coffee with fellow Mill Creek business owners. 8:00am at Ace Corrective Chiropractic.</p>
+          <a href="events.html" class="btn-teal">Learn More</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top ec-gold">
+          <div class="event-date-large">
+            <div class="mo">May</div>
+            <div class="dy">19</div>
+          </div>
+          <div class="event-card-top-info">
+            <h3>May Breakfast Meeting</h3>
+            <p>Tapped Public House, Mill Creek</p>
+          </div>
+        </div>
+        <div class="event-card-body">
+          <span class="event-tag et-member">$20</span>
+          <p>8:00–9:30am networking breakfast. Connect with fellow members over a great meal at Tapped Public House.</p>
+          <a href="https://millcreekchamber.com/event/2026-may-breakfast-meeting/" class="btn-gold-sm" target="_blank">Register Now</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-card-top ec-navy">
+          <div class="event-date-large">
+            <div class="mo">May</div>
+            <div class="dy">21</div>
+          </div>
+          <div class="event-card-top-info">
+            <h3>Third Thursday</h3>
+            <p>Home Plate</p>
+          </div>
+        </div>
+        <div class="event-card-body">
+          <span class="event-tag et-free">Free to Attend</span>
+          <p>Join us at Home Plate for casual after-work networking. 4:30pm — bring a colleague, bring your cards, and enjoy the company.</p>
+          <a href="events.html" class="btn-text-gold">Learn More →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERSHIP -->
+<section class="membership-section">
+  <div class="section-inner">
+    <div class="section-label">Membership</div>
+    <h2 class="section-title">Find Your Level</h2>
+    <p class="section-sub">Every tier gives you access to the Chamber network, events, and advocacy. Pick what fits your business — upgrade anytime through your member portal.</p>
+    <div class="tiers-grid">
+      <div class="tier-card">
+        <span class="tier-badge">General</span>
+        <div class="tier-name">General</div>
+        <div class="tier-desc">A strong foundation for any local business.</div>
+        <ul class="tier-features">
+          <li><span class="tier-check">✓</span> Member directory listing</li>
+          <li><span class="tier-check">✓</span> Monthly newsletter</li>
+          <li><span class="tier-check">✓</span> Event invitations</li>
+          <li><span class="tier-check">✓</span> Networking events</li>
+        </ul>
+        <a href="join.html" class="tier-btn-default">Get Started →</a>
+      </div>
+      <div class="tier-card">
+        <span class="tier-badge">Neighborhood</span>
+        <div class="tier-name">Neighborhood</div>
+        <div class="tier-desc">More visibility, more involvement.</div>
+        <ul class="tier-features">
+          <li><span class="tier-check">✓</span> Everything in General</li>
+          <li><span class="tier-check">✓</span> Enhanced directory listing</li>
+          <li><span class="tier-check">✓</span> Showcase table access</li>
+          <li><span class="tier-check">✓</span> Ribbon cutting support</li>
+        </ul>
+        <a href="join.html" class="tier-btn-teal">Get Started →</a>
+      </div>
+      <div class="tier-card tier-featured">
+        <span class="tier-badge">Most Popular</span>
+        <div class="tier-name">Community</div>
+        <div class="tier-desc">The most popular choice for active members.</div>
+        <ul class="tier-features">
+          <li><span class="tier-check">✓</span> Everything in Neighborhood</li>
+          <li><span class="tier-check">✓</span> Logo on Chamber materials</li>
+          <li><span class="tier-check">✓</span> Speaking opportunities</li>
+          <li><span class="tier-check">✓</span> Priority event placement</li>
+        </ul>
+        <a href="join.html" class="tier-btn-gold">Get Started →</a>
+      </div>
+      <div class="tier-card">
+        <span class="tier-badge">Visionary</span>
+        <div class="tier-name">Visionary</div>
+        <div class="tier-desc">Top-tier presence for leaders in the community.</div>
+        <ul class="tier-features">
+          <li><span class="tier-check">✓</span> Everything in Community</li>
+          <li><span class="tier-check">✓</span> Premier event sponsorship</li>
+          <li><span class="tier-check">✓</span> Board-level engagement</li>
+          <li><span class="tier-check">✓</span> Top directory placement</li>
+        </ul>
+        <a href="join.html" class="tier-btn-light">Get Started →</a>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 36px;">
+      <a href="join.html" class="btn-ghost" style="display:inline-flex;">Compare All Benefits →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-img-wrap">
+        <img src="hero.png" alt="Mill Creek Community" class="about-photo">
+        <div class="about-badge">
+          <span class="badge-icon">🏆</span>
+          <div>
+            <div class="badge-num">25th</div>
+            <div class="badge-label">Annual Festival<br>July 11 &amp; 12, 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-text">
+        <div class="section-label">About the Chamber</div>
+        <h2 class="section-title">Rooted in Mill Creek. Built for Business.</h2>
+        <p class="section-sub">The Mill Creek Chamber of Commerce connects businesses with city officials, local leaders, and the people who live and work here. We've been proudly advocating for local commerce and community vitality since 2000.</p>
+        <blockquote>"We invite you to join our outstanding business community and see how the Chamber can grow your business and build our community."</blockquote>
+        <p style="font-size:14px; color:var(--text-mid);">Led by <strong>Adri Boer, Interim Director</strong>, our dedicated team works daily to create the connections that move Mill Creek forward.</p>
+        <div class="about-actions">
+          <a href="#" class="btn-navy">Meet Our Team</a>
+          <a href="#" class="btn-outline-navy">Our Mission →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRECTORY -->
+<section class="directory-section">
+  <div class="section-inner">
+    <div class="dir-header">
+      <div>
+        <div class="section-label">Member Directory</div>
+        <h2 class="section-title">Our Members</h2>
+      </div>
+      <a href="directory.html" class="btn-navy">Browse Full Directory</a>
+    </div>
+    <div class="dir-grid">
+      <div class="dir-card">
+        <div class="dir-avatar da-1">BB</div>
+        <div class="dir-info">
+          <h4>Budget Blinds</h4>
+          <p>Locally owned and operated for 20+ years. 4.9 rating on Google.</p>
+          <span class="dir-cat">Home Services</span>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="dir-avatar da-3">CF</div>
+        <div class="dir-info">
+          <h4>Chick-fil-A Mill Creek</h4>
+          <p>Fresh, quality food crafted with care (except Sundays, of course).</p>
+          <span class="dir-cat">Restaurant</span>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="dir-avatar da-2">CH</div>
+        <div class="dir-info">
+          <h4>Carbon Health</h4>
+          <p>Modern urgent care combining advanced technology with expert care.</p>
+          <span class="dir-cat">Healthcare</span>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="dir-avatar da-4">CS</div>
+        <div class="dir-info">
+          <h4>Cascade Stride</h4>
+          <p>Local races bringing runners and walkers together since day one.</p>
+          <span class="dir-cat">Recreation</span>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="dir-avatar da-5">DD</div>
+        <div class="dir-info">
+          <h4>Disruption Dynamics</h4>
+          <p>Management consulting for small businesses navigating fast change.</p>
+          <span class="dir-cat">Consulting</span>
+        </div>
+      </div>
+      <div class="dir-card">
+        <div class="dir-avatar da-6">DB</div>
+        <div class="dir-info">
+          <h4>Divaforeva Beauty</h4>
+          <p>Boutique lash &amp; beauty salon. Founded with passion, built on results.</p>
+          <span class="dir-cat">Beauty &amp; Wellness</span>
+        </div>
+      </div>
+    </div>
+    <div class="dir-footer">
+      <a href="directory.html" class="btn-gold">Search the Full Directory →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <div class="contact-bar-inner">
+    <div>
+      <h2>Ready to get involved?</h2>
+      <p style="color:white;">Whether you're joining for the first time or looking to deepen your involvement, we'd love to connect. Reach out directly to Adri Boer, Interim Director.</p>
+      <div style="margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap;">
+        <a href="join.html" class="btn-gold">Become a Member</a>
+        <a href="contact.html" class="btn-ghost">Send a Message →</a>
+      </div>
+    </div>
+    <div class="contact-panel">
+      <div class="contact-panel-title">Contact Us</div>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <span>(425) 673-6200</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <span>director@millcreekchamber.org</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📧</div>
+        <span>info@millcreekchamber.org</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <span>15720 Main St #210<br>Mill Creek, WA 98012</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-accent"></div>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+        <p>Promoting, supporting, and connecting people and businesses to create growth, prosperity, and a vibrant community in Mill Creek, Washington.</p>
+        <div class="footer-social">
+          <a href="https://facebook.com/millcreekbiz" class="social-btn" title="Facebook" target="_blank">f</a>
+          <a href="https://instagram.com/millcreekchamber" class="social-btn" title="Instagram" target="_blank">ig</a>
+          <a href="https://twitter.com/millcreekbiz" class="social-btn" title="Twitter/X" target="_blank">𝕏</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="directory.html">Member Directory</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Membership</h4>
+        <ul>
+          <li><a href="join.html">Join Now</a></li>
+          <li><a href="#">Member Login</a></li>
+          <li><a href="join.html">Membership Levels</a></li>
+          <li><a href="join.html">Member Benefits</a></li>
+          <li><a href="join.html">Renew Membership</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Involved</h4>
+        <ul>
+          <li><a href="contact.html">Ribbon Cutting Request</a></li>
+          <li><a href="contact.html">Speaker Application</a></li>
+          <li><a href="contact.html">Showcase Tables</a></li>
+          <li><a href="board.html">Board of Directors</a></li>
+          <li><a href="contact.html">Volunteer</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Mill Creek Chamber of Commerce · All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a></span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  var toggle = document.getElementById('mobileNavToggle');
+  var nav = document.querySelector('nav');
+  if (!toggle || !nav) return;
+
+  // Add close button
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close-btn';
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function openNav() {
+    nav.classList.add('mobile-open');
+    toggle.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    nav.classList.contains('mobile-open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeNav);
+  });
+})();
+</script>
+
+</body>
+</html>

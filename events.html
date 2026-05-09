@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events – Mill Creek Chamber of Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #2D3A7C;
+  --navy-dark: #1E2A5E;
+  --navy-mid: #3D4FA0;
+  --navy-light: #5468B8;
+  --gold: #C9922A;
+  --gold-bright: #E8B84B;
+  --gold-pale: #FDF6E8;
+  --gold-deep: #9C6B15;
+  --teal: #1A7A6E;
+  --teal-light: #22A394;
+  --teal-pale: #E3F7F5;
+  --gray-light: #F7F8FC;
+  --gray-mid: #8B8FA8;
+  --gray-border: #E2E5F0;
+  --white: #ffffff;
+  --text-dark: #1E2440;
+  --text-mid: #5A6080;
+}
+
+body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); font-size: 16px; line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { background: var(--navy-dark); color: rgba(255,255,255,0.75); font-size: 12.5px; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.topbar a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-bright); }
+.topbar-links { display: flex; gap: 24px; align-items: center; }
+.topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+.topbar-member-btn { background: var(--gold); color: white !important; padding: 4px 14px; border-radius: 4px; font-weight: 600; font-size: 12px; transition: background 0.2s !important; }
+.topbar-member-btn:hover { background: var(--gold-bright) !important; color: var(--navy-dark) !important; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--gray-border); position: sticky; top: 0; z-index: 200; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.logo-wrap { display: flex; align-items: center; text-decoration: none; }
+.logo-wrap img { height: 67px; width: auto; }
+nav { display: flex; align-items: center; gap: 2px; }
+nav a { color: var(--text-mid); text-decoration: none; font-size: 14px; font-weight: 500; padding: 7px 13px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+nav a:hover { color: var(--navy); background: var(--gray-light); }
+nav a.active { color: var(--navy); font-weight: 600; }
+.nav-cta { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%); color: white !important; padding: 9px 22px !important; border-radius: 50px !important; font-weight: 600 !important; margin-left: 10px; box-shadow: 0 4px 14px rgba(30,42,94,0.3); transition: box-shadow 0.2s !important; }
+.nav-cta:hover { box-shadow: 0 6px 20px rgba(30,42,94,0.4) !important; }
+
+/* PAGE HERO */
+.page-hero { background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-mid) 100%); padding: 60px 40px; }
+.page-hero-inner { max-width: 1200px; margin: 0 auto; }
+.page-hero-inner .breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+.page-hero-inner .breadcrumb a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.page-hero-inner .breadcrumb a:hover { color: var(--gold-bright); }
+.page-hero-inner h1 { font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 700; color: white; margin-bottom: 10px; }
+.page-hero-inner p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 560px; }
+
+/* MAIN LAYOUT */
+.page-body { max-width: 1200px; margin: 0 auto; padding: 60px 40px; display: grid; grid-template-columns: 1fr 320px; gap: 60px; align-items: start; }
+
+/* MONTH GROUP */
+.month-group { margin-bottom: 52px; }
+.month-group:last-child { margin-bottom: 0; }
+.month-heading { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--navy); padding-bottom: 14px; border-bottom: 3px solid var(--gold); margin-bottom: 28px; display: flex; align-items: center; gap: 12px; }
+.month-heading span { font-size: 14px; font-weight: 500; color: var(--gray-mid); font-family: 'DM Sans', sans-serif; }
+
+/* EVENT ROW */
+.event-row { display: grid; grid-template-columns: 72px 1fr; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--gray-border); align-items: start; transition: background 0.2s; }
+.event-row:last-child { border-bottom: none; }
+.event-row:hover { background: var(--gray-light); margin: 0 -16px; padding: 24px 16px; border-radius: 10px; }
+.event-date-box { background: var(--navy); border-radius: 12px; width: 72px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+.event-date-box.featured { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); }
+.event-date-box .mo { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.8; }
+.event-date-box .dy { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; line-height: 1; }
+.event-date-box.featured .mo { opacity: 1; color: var(--navy-dark); }
+.event-date-box.featured .dy { color: var(--navy-dark); }
+
+.event-details { }
+.event-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 6px; flex-wrap: wrap; }
+.event-name { font-size: 17px; font-weight: 600; color: var(--navy); text-decoration: none; line-height: 1.3; }
+.event-name:hover { color: var(--gold-deep); }
+.event-featured-badge { display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 50px; white-space: nowrap; flex-shrink: 0; }
+.event-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 8px; }
+.event-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-mid); }
+.event-meta-icon { font-size: 14px; }
+.event-desc { font-size: 14px; color: var(--text-mid); line-height: 1.65; margin-bottom: 14px; }
+.event-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* BUTTONS */
+.btn-gold-sm { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: white; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; transition: background 0.2s; }
+.btn-gold-sm:hover { background: var(--gold-bright); color: var(--navy-dark); }
+.btn-outline-sm { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--navy); border: 1.5px solid var(--navy); padding: 7px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; transition: background 0.2s, color 0.2s; }
+.btn-outline-sm:hover { background: var(--navy); color: white; }
+.btn-teal-sm { display: inline-flex; align-items: center; gap: 6px; background: var(--teal); color: white; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; transition: background 0.2s; }
+.btn-teal-sm:hover { background: var(--teal-light); }
+
+/* PRICE TAG */
+.price-tag { display: inline-block; background: var(--gold-pale); color: var(--gold-deep); font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+.price-free { background: var(--teal-pale); color: var(--teal); }
+
+/* SIDEBAR */
+.sidebar { position: sticky; top: 100px; }
+.sidebar-card { background: var(--gray-light); border: 1px solid var(--gray-border); border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+.sidebar-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.sidebar-card p { font-size: 13px; color: var(--text-mid); margin-bottom: 18px; line-height: 1.6; }
+.sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.sidebar-divider { height: 1px; background: var(--gray-border); margin: 16px 0; }
+.sidebar-contact-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-mid); margin-bottom: 10px; }
+.sidebar-contact-icon { font-size: 15px; width: 28px; text-align: center; }
+.btn-navy-full { display: block; text-align: center; background: var(--navy); color: white; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; }
+.btn-navy-full:hover { background: var(--navy-mid); }
+.btn-gold-full { display: block; text-align: center; background: var(--gold); color: white; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s; margin-top: 10px; }
+.btn-gold-full:hover { background: var(--gold-bright); color: var(--navy-dark); }
+
+/* FOOTER */
+.footer-accent { width: 100%; height: 3px; background: linear-gradient(90deg, var(--navy-light) 0%, var(--gold) 50%, var(--teal) 100%); }
+footer { background: var(--navy-dark); color: rgba(255,255,255,0.55); padding: 48px 40px 24px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.footer-bottom a:hover { color: var(--gold-bright); }
+</style>
+<style>
+/* ===== MOBILE RESPONSIVE ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar { display: none; }
+
+  /* HEADER */
+  .header-inner { padding: 0 16px; height: 64px; }
+  .logo-wrap img { height: 48px; }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE NAV OVERLAY */
+  nav {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--navy-dark);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 250;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  nav.mobile-open { display: flex !important; }
+  nav a {
+    color: white !important;
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05) !important;
+    white-space: normal !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+  }
+  nav a:hover { background: rgba(255,255,255,0.12) !important; }
+  nav a.active { color: var(--gold-bright) !important; }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+    color: var(--navy-dark) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-close-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* HERO */
+  .hero { min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr !important; padding: 60px 20px 48px !important; gap: 0 !important; }
+  .hero h1 { font-size: 34px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; padding-top: 24px; margin-top: 8px; }
+  .hero-card { display: none !important; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+
+  /* TRUST */
+  .trust-strip { display: none; }
+
+  /* VALUE */
+  .value-strip { padding: 36px 16px; }
+  .value-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .value-card { padding: 18px 14px; }
+
+  /* SECTIONS */
+  section { padding: 52px 20px !important; }
+
+  /* EVENTS GRID */
+  .events-grid { grid-template-columns: 1fr !important; }
+  .events-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .events-divider + .events-section .section-inner { padding-top: 52px; }
+
+  /* MEMBERSHIP */
+  .tiers-grid { grid-template-columns: 1fr !important; }
+  .membership-section { padding: 52px 20px !important; }
+
+  /* ABOUT STRIP */
+  .about-grid { grid-template-columns: 1fr !important; gap: 32px; }
+  .about-photo-placeholder, .about-photo { height: 240px; border-radius: 12px; }
+  .about-badge { bottom: 12px; right: 12px; }
+  .about-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY */
+  .dir-grid { grid-template-columns: 1fr !important; }
+  .dir-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* CONTACT BAR */
+  .contact-bar { padding: 48px 20px; }
+  .contact-bar-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .contact-panel { min-width: auto; }
+
+  /* FOOTER */
+  footer { padding: 40px 16px 24px; }
+  .footer-top { grid-template-columns: 1fr !important; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* PAGE HERO */
+  .page-hero { padding: 44px 20px; }
+  .page-hero-inner h1 { font-size: 32px !important; }
+  .page-hero-inner { grid-template-columns: 1fr !important; }
+  .hero-cta-box { min-width: auto; width: 100%; }
+  .hero-range { flex-wrap: wrap; justify-content: center; }
+
+  /* EVENTS PAGE */
+  .page-body { grid-template-columns: 1fr !important; gap: 32px; padding: 32px 20px !important; }
+  .sidebar { position: static !important; top: auto; }
+  .event-row { grid-template-columns: 56px 1fr; gap: 12px; padding: 18px 0; }
+  .event-row:hover { margin: 0; padding: 18px 0; border-radius: 0; background: none; }
+  .event-date-box { width: 56px; height: 56px; border-radius: 8px; }
+  .event-date-box .dy { font-size: 22px; }
+  .month-heading { font-size: 22px; }
+  .event-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY PAGE */
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr 1fr !important; }
+  .search-bar { padding: 12px 16px; top: 64px; }
+  .search-inner { flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+  .result-count { display: none; }
+
+  /* ABOUT PAGE */
+  .mission-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .mission-photo { height: 260px; border-radius: 14px; }
+  .mission-photo img { border-radius: 14px; }
+  .mission-photo-badge { bottom: -10px; right: -10px; padding: 12px 16px; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; gap: 20px; }
+  .impact-num { font-size: 32px !important; }
+  .events-pillars { grid-template-columns: 1fr !important; }
+  .benefits-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+  .join-panel { position: static !important; }
+  .quick-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .quick-list { grid-template-columns: 1fr !important; }
+  .quick-benefits { padding: 52px 20px; }
+
+  /* JOIN PAGE */
+  .tiers-section, .benefits-section, .callout-section { padding: 52px 20px !important; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+
+  /* CONTACT PAGE */
+  .contact-cards { gap: 12px; }
+  .contact-card { padding: 16px; }
+  .map-placeholder { height: 160px; }
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* BOARD PAGE */
+  .officer-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .officer-photo { width: 100% !important; height: 240px; object-position: center 10%; }
+  .officer-body { padding: 20px 20px 24px; }
+  .officer-body::before { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 4px; }
+  .board-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .board-photo { width: 100% !important; height: 200px; object-position: center 10%; }
+  .board-body { padding: 18px 20px 20px; }
+
+  /* GENERAL */
+  .section-title { font-size: 28px !important; }
+}
+
+@media (max-width: 480px) {
+  .value-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr !important; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; }
+  .hero h1 { font-size: 28px !important; }
+  .hero-actions a { width: 100%; text-align: center; justify-content: center; }
+  .stat-num { font-size: 26px !important; }
+  .section-title { font-size: 24px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>📍 15720 Main St #210, Mill Creek, WA 98012 &nbsp;·&nbsp; Serving Mill Creek since 2000</span>
+    <div class="topbar-links">
+      <a href="tel:4256736200">(425) 673-6200</a>
+      <div class="topbar-divider"></div>
+      <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+      <div class="topbar-divider"></div>
+      <a href="#" class="topbar-member-btn">Member Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="events.html" class="active">Events</a>
+      <a href="directory.html">Member Directory</a>
+      <a href="contact.html">Contact</a>
+      <a href="join.html" class="nav-cta">Join the Chamber</a>
+    </nav>
+    <button class="nav-toggle" id="mobileNavToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;›&nbsp; Events</div>
+    <h1>Upcoming Events</h1>
+    <p>Networking breakfasts, community gatherings, and the biggest festival in Mill Creek — there's always something worth showing up for.</p>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+  <div class="events-list">
+
+    <!-- MAY -->
+    <div class="month-group">
+      <div class="month-heading">May 2026 <span>4 events</span></div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">12</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="#" class="event-name">Coffee Connections</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕗</span> 8:00 AM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Ace Corrective Chiropractic</span>
+            <span class="price-tag price-free">Free</span>
+          </div>
+          <p class="event-desc">Casual morning networking over coffee with fellow Mill Creek business owners. A low-key way to start the week connected.</p>
+          <div class="event-actions">
+            <a href="#" class="btn-teal-sm">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">19</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026-may-breakfast-meeting/" class="event-name" target="_blank">May Breakfast Meeting — Replacing Our Usual Lunch &amp; Learn</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕗</span> 8:00 – 9:30 AM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Tapped Mill Creek (The Farm), 13215 39th Ave SE, Suite 104</span>
+            <span class="price-tag">$5 – $20</span>
+          </div>
+          <p class="event-desc">Trading in the usual Lunch &amp; Learn for bacon, eggs, and great conversation. Join us at Tapped Mill Creek for a morning of networking and community.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026-may-breakfast-meeting/#tribe-tickets__tickets-form" class="btn-gold-sm" target="_blank">Get Tickets</a>
+            <a href="https://millcreekchamber.com/event/2026-may-breakfast-meeting/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">21</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="#" class="event-name">Third Thursday</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕟</span> 4:30 PM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Home Plate, Mill Creek</span>
+            <span class="price-tag price-free">Free</span>
+          </div>
+          <p class="event-desc">After-work networking at Home Plate. Bring your cards, bring a colleague, and enjoy some good company to close out the week.</p>
+          <div class="event-actions">
+            <a href="#" class="btn-teal-sm">Learn More</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">22</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026may-give-blood-give-life/" class="event-name" target="_blank">Give Blood Give Life</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕤</span> 9:30 AM – 3:30 PM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Town &amp; Country Markets, 15605 Main St</span>
+            <span class="price-tag price-free">Free</span>
+          </div>
+          <p class="event-desc">Bloodmobile at Mill Creek Town &amp; Country Markets. Book your one-hour appointment at bloodworksNW.org/giveblood.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026may-give-blood-give-life/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">May</span>
+          <span class="dy">31</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/free-orca-cards-transit-benefits/" class="event-name" target="_blank">Free ORCA Cards &amp; Transit Benefits for Small Businesses</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕗</span> All Day</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Snohomish County</span>
+            <span class="price-tag price-free">Free</span>
+          </div>
+          <p class="event-desc">Community Transit's Small Business Partnerships program offers FREE unlimited-use ORCA cards for employees at Snohomish County businesses with 5–49 employees.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/free-orca-cards-transit-benefits/" class="btn-outline-sm" target="_blank">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUNE -->
+    <div class="month-group">
+      <div class="month-heading">June 2026 <span>3 events</span></div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">Jun</span>
+          <span class="dy">7</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/girls-on-the-run-celebration-5k/" class="event-name" target="_blank">Girls On The Run Celebration 5K</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕖</span> 7:00 – 10:30 AM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Mill Creek Town Center, 15310 Main St</span>
+          </div>
+          <p class="event-desc">The season-closing 5K celebration for Girls On The Run participants. Every runner receives a commemorative medal — a joyful community moment for all ages.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/girls-on-the-run-celebration-5k/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">Jun</span>
+          <span class="dy">13</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-handmade/" class="event-name" target="_blank">2026 Mill Creek Handmade – A Handmade Goods &amp; Art Walk</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕚</span> 11:00 AM – 4:00 PM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Mill Creek Town Center, 15310 Main St</span>
+            <span class="price-tag price-free">Free</span>
+          </div>
+          <p class="event-desc">Kicking off Mill Creek Summer — a rebranded celebration of local makers, artists, and handmade goods. A perfect afternoon in the Town Center.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-handmade/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">Jun</span>
+          <span class="dy">18</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/17th-annual-purse-auction/" class="event-name" target="_blank">17th Annual Purse Auction</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕚</span> 11:00 AM – 1:00 PM</span>
+          </div>
+          <p class="event-desc">A beloved Mill Creek tradition. Details and location to be announced — check back soon.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/17th-annual-purse-auction/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JULY -->
+    <div class="month-group">
+      <div class="month-heading">July 2026 <span>2 events</span></div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">Jul</span>
+          <span class="dy">9</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026joint-chamber-networking-breakfast/" class="event-name" target="_blank">Joint Chamber Networking Breakfast</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕖</span> 7:00 – 9:30 AM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Beardslee Public House, 19116 Beardslee Blvd, Bothell</span>
+          </div>
+          <p class="event-desc">A joint networking breakfast with three local Chambers — Bothell Kenmore, Mill Creek, and Woodinville. Speaker details coming soon.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026joint-chamber-networking-breakfast/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-row">
+        <div class="event-date-box featured">
+          <span class="mo">Jul</span>
+          <span class="dy">11</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-festival-street-fair/" class="event-name" target="_blank">25th Annual Mill Creek Festival &amp; Street Fair</a>
+            <span class="event-featured-badge">⭐ Featured</span>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">📅</span> July 11 (10am–6pm) &amp; July 12 (10am–7pm)</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> 911 161st St SE, Mill Creek</span>
+            <span class="price-tag price-free">Free Admission</span>
+          </div>
+          <p class="event-desc">The biggest event of the year — two full days of live music, local vendors, food, kids' activities, and the community spirit that defines Mill Creek. The 25th Annual Festival is not to be missed.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-festival-street-fair/" class="btn-gold-sm" target="_blank">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUGUST -->
+    <div class="month-group">
+      <div class="month-heading">August 2026 <span>1 event</span></div>
+
+      <div class="event-row">
+        <div class="event-date-box featured">
+          <span class="mo">Aug</span>
+          <span class="dy">31</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-classic/" class="event-name" target="_blank">2026 Mill Creek Classic — 9th Annual Charity Golf Tournament</a>
+            <span class="event-featured-badge">⭐ Featured</span>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕗</span> 8:00 AM – 5:00 PM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Mill Creek Country Club, 15500 Country Club Dr.</span>
+          </div>
+          <p class="event-desc">The Chamber's annual charity golf tournament at the private Mill Creek Country Club — a top-notch Northwest facility and a great day for a great cause.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026-mill-creek-classic/" class="btn-gold-sm" target="_blank">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OCTOBER -->
+    <div class="month-group">
+      <div class="month-heading">October 2026 <span>1 event</span></div>
+
+      <div class="event-row">
+        <div class="event-date-box">
+          <span class="mo">Oct</span>
+          <span class="dy">2</span>
+        </div>
+        <div class="event-details">
+          <div class="event-top">
+            <a href="https://millcreekchamber.com/event/2026an-evening-in-silk/" class="event-name" target="_blank">An Evening in SILK</a>
+          </div>
+          <div class="event-meta">
+            <span class="event-meta-item"><span class="event-meta-icon">🕕</span> 6:00 – 10:00 PM</span>
+            <span class="event-meta-item"><span class="event-meta-icon">📍</span> Tulalip Resort Casino, 10200 Quil Ceda Blvd, Tulalip</span>
+          </div>
+          <p class="event-desc">Cocoon House's signature auction gala celebrating community impact and support for young people experiencing homelessness. A special evening for a meaningful cause.</p>
+          <div class="event-actions">
+            <a href="https://millcreekchamber.com/event/2026an-evening-in-silk/" class="btn-outline-sm" target="_blank">Event Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-label">Upcoming Highlight</div>
+      <h3>25th Annual Mill Creek Festival</h3>
+      <p>July 11 &amp; 12, 2026 · Two days, free admission, the whole community under one roof.</p>
+      <a href="https://millcreekchamber.com/event/2026-mill-creek-festival-street-fair/" class="btn-gold-full" target="_blank">Festival Details →</a>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-label">Host an Event</div>
+      <h3>Ribbon Cutting or Showcase?</h3>
+      <p>Chamber members can request ribbon cuttings, apply for showcase tables, or inquire about sponsorship opportunities.</p>
+      <a href="#" class="btn-navy-full">Submit a Request</a>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-label">Questions</div>
+      <p style="margin-bottom:14px;">Contact Adri Boer, Interim Director</p>
+      <div class="sidebar-contact-item"><span class="sidebar-contact-icon">📞</span> (425) 673-6200</div>
+      <div class="sidebar-contact-item"><span class="sidebar-contact-icon">✉️</span> director@millcreekchamber.org</div>
+    </div>
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-accent"></div>
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Mill Creek Chamber of Commerce · All rights reserved.</span>
+    <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a></span>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  var toggle = document.getElementById('mobileNavToggle');
+  var nav = document.querySelector('nav');
+  if (!toggle || !nav) return;
+
+  // Add close button
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close-btn';
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function openNav() {
+    nav.classList.add('mobile-open');
+    toggle.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    nav.classList.contains('mobile-open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeNav);
+  });
+})();
+</script>
+
+</body>
+</html>

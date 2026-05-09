@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Board of Directors – Mill Creek Chamber of Commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #2D3A7C;
+  --navy-dark: #1E2A5E;
+  --navy-mid: #3D4FA0;
+  --navy-light: #5468B8;
+  --gold: #C9922A;
+  --gold-bright: #E8B84B;
+  --gold-pale: #FDF6E8;
+  --gold-deep: #9C6B15;
+  --teal: #1A7A6E;
+  --teal-light: #22A394;
+  --teal-pale: #E3F7F5;
+  --gray-light: #F7F8FC;
+  --gray-mid: #8B8FA8;
+  --gray-border: #E2E5F0;
+  --white: #ffffff;
+  --text-dark: #1E2440;
+  --text-mid: #5A6080;
+}
+
+body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); font-size: 16px; line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { background: var(--navy-dark); color: rgba(255,255,255,0.75); font-size: 12.5px; padding: 7px 0; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+.topbar a { color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-bright); }
+.topbar-links { display: flex; gap: 24px; align-items: center; }
+.topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+.topbar-member-btn { background: var(--gold); color: white !important; padding: 4px 14px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+.topbar-member-btn:hover { background: var(--gold-bright) !important; color: var(--navy-dark) !important; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.97); border-bottom: 1px solid var(--gray-border); position: sticky; top: 0; z-index: 200; }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.logo-wrap { display: flex; align-items: center; text-decoration: none; }
+.logo-wrap img { height: 67px; width: auto; }
+nav { display: flex; align-items: center; gap: 2px; }
+nav a { color: var(--text-mid); text-decoration: none; font-size: 14px; font-weight: 500; padding: 7px 13px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+nav a:hover { color: var(--navy); background: var(--gray-light); }
+nav a.active { color: var(--navy); font-weight: 600; }
+.nav-cta { background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-light) 100%); color: white !important; padding: 9px 22px !important; border-radius: 50px !important; font-weight: 600 !important; margin-left: 10px; box-shadow: 0 4px 14px rgba(30,42,94,0.3); }
+
+/* PAGE HERO */
+.page-hero {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, var(--navy-mid) 100%);
+  padding: 72px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 360px; height: 360px; border-radius: 50%; background: rgba(201,146,42,0.06); }
+.page-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 14px; }
+.breadcrumb a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gold-bright); }
+.page-hero-inner h1 { font-family: 'Playfair Display', serif; font-size: 50px; font-weight: 700; color: white; margin-bottom: 12px; }
+.page-hero-inner p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 580px; line-height: 1.75; }
+
+/* LEADERSHIP — full width cards */
+.leadership-section { padding: 80px 40px; background: white; }
+.leadership-inner { max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 48px; }
+
+/* OFFICER CARDS — horizontal */
+.officer-card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  border: 1.5px solid var(--gold);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 28px;
+  transition: box-shadow 0.2s;
+}
+.officer-card:hover { box-shadow: 0 10px 36px rgba(30,42,94,0.1); }
+.officer-photo {
+  width: 220px;
+  height: 260px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  flex-shrink: 0;
+}
+.officer-body {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.officer-body::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-bright) 100%);
+}
+.officer-role { font-size: 11px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 6px; }
+.officer-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.officer-biz { font-size: 13px; color: var(--gray-mid); margin-bottom: 16px; }
+.officer-biz a { color: var(--navy-mid); text-decoration: none; font-weight: 600; }
+.officer-biz a:hover { color: var(--gold-deep); }
+.officer-quote {
+  font-size: 14.5px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  font-style: italic;
+  border-left: 3px solid var(--gold-pale);
+  padding-left: 16px;
+  max-width: 600px;
+}
+.officer-committees { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.committee-tag { font-size: 11px; font-weight: 600; background: var(--gold-pale); color: var(--gold-deep); padding: 4px 12px; border-radius: 50px; }
+
+/* BOARD SECTION */
+.board-section { padding: 0 40px 80px; background: white; }
+.board-inner { max-width: 1200px; margin: 0 auto; }
+.board-divider { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+.board-divider-line { flex: 1; height: 1px; background: var(--gray-border); }
+.board-divider-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-mid); }
+
+/* BOARD GRID — vertical like officers */
+.board-grid { display: flex; flex-direction: column; gap: 24px; }
+.board-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  border: 1px solid var(--gray-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.board-card:hover { box-shadow: 0 8px 28px rgba(30,42,94,0.1); border-color: var(--gold-bright); }
+.board-photo {
+  width: 200px;
+  height: 220px;
+  object-fit: cover;
+  object-position: center 15%;
+  display: block;
+  flex-shrink: 0;
+}
+.board-body { padding: 22px 28px; display: flex; flex-direction: column; justify-content: center; }
+.board-role { font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 4px; }
+.board-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.board-biz { font-size: 12.5px; color: var(--gray-mid); margin-bottom: 12px; }
+.board-biz a { color: var(--navy-mid); text-decoration: none; font-weight: 600; }
+.board-biz a:hover { color: var(--gold-deep); }
+.board-quote { font-size: 13px; color: var(--text-mid); line-height: 1.7; font-style: italic; border-left: 2px solid var(--gold-pale); padding-left: 12px; }
+.board-committees { margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.board-tag { font-size: 10px; font-weight: 600; background: var(--teal-pale); color: var(--teal); padding: 3px 10px; border-radius: 50px; }
+
+/* JOIN CTA */
+.board-cta { background: var(--gray-light); padding: 60px 40px; text-align: center; }
+.board-cta h2 { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.board-cta p { font-size: 16px; color: var(--text-mid); margin-bottom: 24px; }
+.btn-gold { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%); color: var(--navy-dark); padding: 13px 28px; border-radius: 50px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 16px rgba(201,146,42,0.35); transition: transform 0.15s, box-shadow 0.2s; margin: 0 8px; }
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,146,42,0.5); }
+.btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--navy); border: 2px solid var(--navy); padding: 12px 28px; border-radius: 50px; font-weight: 600; font-size: 14px; text-decoration: none; transition: background 0.2s, color 0.2s; margin: 0 8px; }
+.btn-outline:hover { background: var(--navy); color: white; }
+
+/* FOOTER */
+.footer-accent { width: 100%; height: 3px; background: linear-gradient(90deg, var(--navy-light) 0%, var(--gold) 50%, var(--teal) 100%); }
+footer { background: var(--navy-dark); padding: 32px 40px; }
+.footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; }
+.footer-bottom a:hover { color: var(--gold-bright); }
+</style>
+<style>
+/* ===== MOBILE RESPONSIVE ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar { display: none; }
+
+  /* HEADER */
+  .header-inner { padding: 0 16px; height: 64px; }
+  .logo-wrap img { height: 48px; }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: flex !important;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE NAV OVERLAY */
+  nav {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--navy-dark);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 250;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  nav.mobile-open { display: flex !important; }
+  nav a {
+    color: white !important;
+    font-size: 20px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05) !important;
+    white-space: normal !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+  }
+  nav a:hover { background: rgba(255,255,255,0.12) !important; }
+  nav a.active { color: var(--gold-bright) !important; }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%) !important;
+    color: var(--navy-dark) !important;
+    box-shadow: none !important;
+    font-size: 18px !important;
+    padding: 14px 24px !important;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-close-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* HERO */
+  .hero { min-height: auto; }
+  .hero-inner { grid-template-columns: 1fr !important; padding: 60px 20px 48px !important; gap: 0 !important; }
+  .hero h1 { font-size: 34px !important; }
+  .hero-sub { font-size: 16px !important; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; padding-top: 24px; margin-top: 8px; }
+  .hero-card { display: none !important; }
+  .hero-actions { flex-wrap: wrap; gap: 12px; }
+
+  /* TRUST */
+  .trust-strip { display: none; }
+
+  /* VALUE */
+  .value-strip { padding: 36px 16px; }
+  .value-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .value-card { padding: 18px 14px; }
+
+  /* SECTIONS */
+  section { padding: 52px 20px !important; }
+
+  /* EVENTS GRID */
+  .events-grid { grid-template-columns: 1fr !important; }
+  .events-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .events-divider + .events-section .section-inner { padding-top: 52px; }
+
+  /* MEMBERSHIP */
+  .tiers-grid { grid-template-columns: 1fr !important; }
+  .membership-section { padding: 52px 20px !important; }
+
+  /* ABOUT STRIP */
+  .about-grid { grid-template-columns: 1fr !important; gap: 32px; }
+  .about-photo-placeholder, .about-photo { height: 240px; border-radius: 12px; }
+  .about-badge { bottom: 12px; right: 12px; }
+  .about-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY */
+  .dir-grid { grid-template-columns: 1fr !important; }
+  .dir-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* CONTACT BAR */
+  .contact-bar { padding: 48px 20px; }
+  .contact-bar-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .contact-panel { min-width: auto; }
+
+  /* FOOTER */
+  footer { padding: 40px 16px 24px; }
+  .footer-top { grid-template-columns: 1fr !important; gap: 24px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+
+  /* PAGE HERO */
+  .page-hero { padding: 44px 20px; }
+  .page-hero-inner h1 { font-size: 32px !important; }
+  .page-hero-inner { grid-template-columns: 1fr !important; }
+  .hero-cta-box { min-width: auto; width: 100%; }
+  .hero-range { flex-wrap: wrap; justify-content: center; }
+
+  /* EVENTS PAGE */
+  .page-body { grid-template-columns: 1fr !important; gap: 32px; padding: 32px 20px !important; }
+  .sidebar { position: static !important; top: auto; }
+  .event-row { grid-template-columns: 56px 1fr; gap: 12px; padding: 18px 0; }
+  .event-row:hover { margin: 0; padding: 18px 0; border-radius: 0; background: none; }
+  .event-date-box { width: 56px; height: 56px; border-radius: 8px; }
+  .event-date-box .dy { font-size: 22px; }
+  .month-heading { font-size: 22px; }
+  .event-actions { flex-wrap: wrap; }
+
+  /* DIRECTORY PAGE */
+  .featured-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr 1fr !important; }
+  .search-bar { padding: 12px 16px; top: 64px; }
+  .search-inner { flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+  .result-count { display: none; }
+
+  /* ABOUT PAGE */
+  .mission-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .mission-photo { height: 260px; border-radius: 14px; }
+  .mission-photo img { border-radius: 14px; }
+  .mission-photo-badge { bottom: -10px; right: -10px; padding: 12px 16px; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; gap: 20px; }
+  .impact-num { font-size: 32px !important; }
+  .events-pillars { grid-template-columns: 1fr !important; }
+  .benefits-inner { grid-template-columns: 1fr !important; gap: 32px; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+  .join-panel { position: static !important; }
+  .quick-inner { grid-template-columns: 1fr !important; gap: 28px; }
+  .quick-list { grid-template-columns: 1fr !important; }
+  .quick-benefits { padding: 52px 20px; }
+
+  /* JOIN PAGE */
+  .tiers-section, .benefits-section, .callout-section { padding: 52px 20px !important; }
+  .benefits-grid { grid-template-columns: 1fr !important; }
+
+  /* CONTACT PAGE */
+  .contact-cards { gap: 12px; }
+  .contact-card { padding: 16px; }
+  .map-placeholder { height: 160px; }
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* BOARD PAGE */
+  .officer-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .officer-photo { width: 100% !important; height: 240px; object-position: center 10%; }
+  .officer-body { padding: 20px 20px 24px; }
+  .officer-body::before { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 4px; }
+  .board-card { grid-template-columns: 1fr !important; border-radius: 14px; }
+  .board-photo { width: 100% !important; height: 200px; object-position: center 10%; }
+  .board-body { padding: 18px 20px 20px; }
+
+  /* GENERAL */
+  .section-title { font-size: 28px !important; }
+}
+
+@media (max-width: 480px) {
+  .value-grid { grid-template-columns: 1fr !important; }
+  .regular-grid { grid-template-columns: 1fr !important; }
+  .impact-inner { grid-template-columns: 1fr 1fr !important; }
+  .hero h1 { font-size: 28px !important; }
+  .hero-actions a { width: 100%; text-align: center; justify-content: center; }
+  .stat-num { font-size: 26px !important; }
+  .section-title { font-size: 24px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>📍 15720 Main St #210, Mill Creek, WA 98012 &nbsp;·&nbsp; Serving Mill Creek since 2000</span>
+    <div class="topbar-links">
+      <a href="tel:4256736200">(425) 673-6200</a>
+      <div class="topbar-divider"></div>
+      <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a>
+      <div class="topbar-divider"></div>
+      <a href="#" class="topbar-member-btn">Member Login</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo-wrap">
+      <img src="logo.png" alt="Mill Creek Chamber of Commerce">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html" class="active">About</a>
+      <a href="events.html">Events</a>
+      <a href="directory.html">Member Directory</a>
+      <a href="contact.html">Contact</a>
+      <a href="join.html" class="nav-cta">Join the Chamber</a>
+    </nav>
+    <button class="nav-toggle" id="mobileNavToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;›&nbsp; <a href="about.html">About</a> &nbsp;›&nbsp; Board of Directors</div>
+    <h1>Board of Directors</h1>
+    <p>The people who show up, roll up their sleeves, and make Mill Creek a better place to live, work, and do business.</p>
+  </div>
+</div>
+
+<!-- LEADERSHIP: OFFICERS -->
+<section class="leadership-section">
+  <div class="leadership-inner">
+    <div class="section-label">Executive Officers</div>
+    <h2 class="section-title">Chamber Leadership</h2>
+
+    <!-- GREG -->
+    <div class="officer-card">
+      <img src="greg.jpg" alt="Greg Elwin" class="officer-photo">
+      <div class="officer-body">
+        <div class="officer-role">President</div>
+        <div class="officer-name">Greg Elwin</div>
+        <div class="officer-biz">Real Estate Broker &nbsp;·&nbsp; <a href="https://www.raintownrealty.com/bio/GregElwin" target="_blank">Greg Elwin Real Estate / Raintown Realty</a></div>
+        <p class="officer-quote">"Our Chamber is unique due to its broad range of membership inclusivity. We feel that if your business does even a little bit of business in town, we want you to be involved. The mantra 'live, work and play' is so true here. It's important for all of us to share our talents and skills for the betterment of our community and our organization. We want everyone who's part of it to be involved."</p>
+      </div>
+    </div>
+
+    <!-- MARC -->
+    <div class="officer-card">
+      <img src="marc2.png" alt="Marc Zimmerman" class="officer-photo">
+      <div class="officer-body">
+        <div class="officer-role">Vice President</div>
+        <div class="officer-name">Marc Zimmerman</div>
+        <div class="officer-biz">Owner &nbsp;·&nbsp; <a href="https://www.4zdesign.com/" target="_blank">4Z Design, Marketing &amp; Printing</a></div>
+        <p class="officer-quote">"Mill Creek stands out because it's truly community-focused. Other groups I've been part of leaned heavy on sales and transactions. Here, the goal is simple: make Mill Creek better. That focus changes everything — the energy, the collaboration, and the impact. I'm here because I care about my community. Serving on the Board lets me help shape events, strengthen relationships, and contribute to something bigger than my own business."</p>
+      </div>
+    </div>
+
+    <!-- DARSHANA -->
+    <div class="officer-card">
+      <img src="darshana.png" alt="Darshana Maru" class="officer-photo">
+      <div class="officer-body">
+        <div class="officer-role">Secretary</div>
+        <div class="officer-name">Darshana Maru</div>
+        <div class="officer-biz">Mill Creek Branch Manager &nbsp;·&nbsp; <a href="https://www.globalcu.org/branches/mill-creek-branch/" target="_blank">Global Credit Union</a></div>
+        <p class="officer-quote">"Mill Creek is a vibrant and diverse community that I am proud to be affiliated with. It is rewarding to contribute through volunteering and fostering community engagement with various events throughout Mill Creek and the Town Center. I am excited to be a part of our community growth."</p>
+      </div>
+    </div>
+
+    <!-- BILL -->
+    <div class="officer-card">
+      <img src="bill.jpg" alt="Bill Temple" class="officer-photo">
+      <div class="officer-body">
+        <div class="officer-role">Treasurer</div>
+        <div class="officer-name">Bill Temple</div>
+        <div class="officer-biz">Retired Banker</div>
+        <p class="officer-quote">"The Chamber value is the opportunity to give back and be a part of the Mill Creek Community. Being a volunteer is the way to do that and also stay up to date on what is happening locally. The people involved makes us unique and our growth is evidence of that."</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- BOARD MEMBERS -->
+<section class="board-section">
+  <div class="board-inner">
+    <div class="board-divider">
+      <div class="board-divider-line"></div>
+      <div class="board-divider-label">Board Members</div>
+      <div class="board-divider-line"></div>
+    </div>
+    <div class="board-grid">
+
+      <!-- JOE -->
+      <div class="board-card">
+        <img src="joe.jpg" alt="Joe Cresanti" class="board-photo">
+        <div class="board-body">
+          <div class="board-role">Board Member</div>
+          <div class="board-name">Dr. Joe Cresanti</div>
+          <div class="board-biz">Owner &nbsp;·&nbsp; <a href="https://www.acechiro.net/" target="_blank">ACE Corrective Chiropractic</a></div>
+          <p class="board-quote">"Being a member of the Chamber of Commerce is both a way to meet fellow business owners and community leaders but also have an avenue to give back to the community I live in and serve."</p>
+          <div class="board-committees">
+            <span class="board-tag">Membership Committee</span>
+            <span class="board-tag">Scholarship Committee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MELISSA -->
+      <div class="board-card">
+        <img src="melissa.jpeg" alt="Melissa Duque" class="board-photo">
+        <div class="board-body">
+          <div class="board-role">Board Member</div>
+          <div class="board-name">Melissa Duque</div>
+          <div class="board-biz">Mayor Pro Tem &nbsp;·&nbsp; <a href="https://millcreekwa.gov/council/members" target="_blank">Mill Creek City Council</a></div>
+          <p class="board-quote">"My role is to help strengthen the relationship between the Chamber and the City of Mill Creek to make sure the community is heard. Especially as the City continues its vision for an engaged and connected community."</p>
+          <div class="board-committees">
+            <span class="board-tag">Government Liaison</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEVIN -->
+      <div class="board-card">
+        <img src="kevin.jpg" alt="Kevin Giboney" class="board-photo">
+        <div class="board-body">
+          <div class="board-role">Board Member · Past President</div>
+          <div class="board-name">Kevin Giboney</div>
+          <div class="board-biz">Senior Instructor &nbsp;·&nbsp; <a href="https://gowmst.com/" target="_blank">WMST</a></div>
+          <p class="board-quote">"I appreciate the opportunity to give back to a community that is central to my business, whether it is through popular community events like the festival and summer concert series or supporting important causes through the Chamber golf tournament and annual scholarship fund."</p>
+        </div>
+      </div>
+
+      <!-- JEFF -->
+      <div class="board-card">
+        <img src="jk.png" alt="Jeff Kyle" class="board-photo">
+        <div class="board-body">
+          <div class="board-role">Board Member</div>
+          <div class="board-name">Jeff Kyle</div>
+          <div class="board-biz">CEO &nbsp;·&nbsp; <a href="https://activemillcreek.com/" target="_blank">Active Mill Creek</a></div>
+          <p class="board-quote">"All of us who are on the board or on committees are deeply committed to the health and benefit of Mill Creek, her citizens and we demonstrate this through our service, our financial investment and the fun we have together as a team of servant leaders."</p>
+          <div class="board-committees">
+            <span class="board-tag">Networking Committee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRIAN -->
+      <div class="board-card">
+        <img src="brian.jpeg" alt="Brian Trendler" class="board-photo">
+        <div class="board-body">
+          <div class="board-role">Board Member</div>
+          <div class="board-name">Brian Trendler</div>
+          <div class="board-biz">Co-Owner &nbsp;·&nbsp; <a href="https://laftechnw.com/" target="_blank">LAF Tech NW</a></div>
+          <p class="board-quote">"As the Mill Creek Chamber continues to grow, we'll never lose sight of why we're all here. For me, to be seen, heard, and have the chance to engage with others defines the value in a Chamber Membership."</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="board-cta">
+  <h2>Interested in serving on the Board?</h2>
+  <p>We're always looking for engaged community members who want to make Mill Creek better.</p>
+  <a href="contact.html" class="btn-outline">Get in Touch</a>
+  <a href="join.html" class="btn-gold">Become a Member First →</a>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-accent"></div>
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Mill Creek Chamber of Commerce · All rights reserved.</span>
+    <span><a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="mailto:info@millcreekchamber.org">info@millcreekchamber.org</a></span>
+  </div>
+</footer>
+
+
+<script>
+(function() {
+  var toggle = document.getElementById('mobileNavToggle');
+  var nav = document.querySelector('nav');
+  if (!toggle || !nav) return;
+
+  // Add close button
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'nav-close-btn';
+  closeBtn.innerHTML = '&#x2715;';
+  closeBtn.setAttribute('aria-label', 'Close menu');
+  nav.insertBefore(closeBtn, nav.firstChild);
+
+  function openNav() {
+    nav.classList.add('mobile-open');
+    toggle.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', function() {
+    nav.classList.contains('mobile-open') ? closeNav() : openNav();
+  });
+  closeBtn.addEventListener('click', closeNav);
+  nav.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', closeNav);
+  });
+})();
+</script>
+
+</body>
+</html>
