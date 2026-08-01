@@ -1962,6 +1962,75 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .qt-qi-del:hover { background: #fee2e2; }
   .qt-empty-state { text-align: center; color: #94a3b8; padding: 28px; font-size: .88rem; }
 
+
+  /* ── Settings Panel ───────────────────────────────────────── */
+  .qt-settings-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.55); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .qt-settings-overlay.open { display: flex; }
+  .qt-settings-box {
+    background: #fff; border-radius: 18px; width: 90vw; max-width: 860px;
+    max-height: 88vh; display: flex; flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.35);
+    animation: qtFadeIn .2s ease;
+  }
+  .qt-settings-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px 14px; border-bottom: 1.5px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .qt-settings-title { font-size: 1.1rem; font-weight: 800; color: #1a2744; }
+  .qt-settings-body { flex: 1; overflow-y: auto; padding: 0; }
+  .qt-stab-bar {
+    display: flex; gap: 0; border-bottom: 2px solid #e2e8f0;
+    padding: 0 24px; background: #f8fafc; flex-shrink: 0;
+  }
+  .qt-stab {
+    padding: 12px 18px; font-size: .82rem; font-weight: 700; cursor: pointer;
+    border: none; background: none; color: #64748b;
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: color .15s, border-color .15s;
+  }
+  .qt-stab.active { color: #e8701a; border-bottom-color: #e8701a; }
+  .qt-stab:hover:not(.active) { color: #1a2744; }
+  .qt-spanel { display: none; padding: 22px 24px; }
+  .qt-spanel.active { display: block; }
+  .qt-sfield-label {
+    font-size: .75rem; font-weight: 700; color: #64748b; text-transform: uppercase;
+    letter-spacing: .04em; margin-bottom: 6px; margin-top: 16px;
+  }
+  .qt-sfield-label:first-child { margin-top: 0; }
+  .qt-sinput {
+    border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 8px 11px;
+    font-size: .88rem; outline: none; width: 110px;
+    transition: border-color .15s;
+  }
+  .qt-sinput:focus { border-color: #e8701a; }
+  .qt-stier-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+  .qt-stier-table th {
+    background: #f1f5f9; padding: 7px 10px; text-align: center;
+    font-weight: 700; color: #475569; border: 1px solid #e2e8f0; white-space: nowrap;
+  }
+  .qt-stier-table td { padding: 5px 6px; border: 1px solid #e2e8f0; text-align: center; }
+  .qt-stier-table .qt-stier-label {
+    font-weight: 700; color: #1a2744; text-align: left; background: #f8fafc;
+    white-space: nowrap; padding: 5px 10px;
+  }
+  .qt-stier-table input {
+    width: 68px; padding: 5px 6px; border: 1.5px solid #e2e8f0;
+    border-radius: 6px; font-size: .78rem; text-align: center; outline: none;
+  }
+  .qt-stier-table input:focus { border-color: #e8701a; }
+  .qt-margin-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .qt-margin-row label { font-size: .8rem; color: #475569; min-width: 80px; }
+  .qt-settings-footer {
+    padding: 14px 24px; border-top: 1.5px solid #e2e8f0;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; background: #f8fafc; border-radius: 0 0 18px 18px;
+  }
+
   #qt-results-section { display: none; }
 
   .catalog-reminder {
@@ -3029,47 +3098,53 @@ function addToQuote(name, price) {
 }
 
 // ─── Quote Builder — Pricing data ────────────────────────────────────────────
-const QT_IPU_RATE = 0.10;
+const QT_PRICING_KEY = '4zd_pricing_v1';
+const QT_HT_SIZES = ['1.5" sq','2.5" sq','4" sq','5.8"x8.3"','11.7"x4.25"','16.5"x5.85"','8.3"x11.7"','11.7" sq','11.7"x16.5"'];
+const QT_DEFAULT_PRICING = {
+  ipuRate: 0.10,
+  margins: [
+    {from:1,  to:35,  rate:1.00},
+    {from:36, to:60,  rate:0.85},
+    {from:61, to:144, rate:0.65},
+    {from:145,to:249, rate:0.55},
+    {from:250,to:9999,rate:0.40},
+  ],
+  htTiers: [
+    { from:10,  to:19,  prices:[2.62,2.95,3.23,4.28,4.28,5.12,5.12,6.43,7.74] },
+    { from:20,  to:49,  prices:[2.18,2.45,2.69,3.57,3.57,4.27,4.27,5.37,6.46] },
+    { from:50,  to:99,  prices:[1.30,1.62,1.96,2.56,2.56,3.30,3.30,4.24,5.20] },
+    { from:100, to:199, prices:[0.87,1.11,1.45,1.77,1.77,2.27,2.27,2.95,3.63] },
+    { from:200, to:299, prices:[0.70,0.93,1.26,1.49,1.49,1.86,1.86,2.43,3.02] },
+    { from:300, to:499, prices:[0.56,0.78,1.10,1.33,1.33,1.71,1.71,2.24,2.78] },
+  ],
+  embTiers: [
+    { from:1,   to:5,   price:7.00 },
+    { from:6,   to:23,  price:5.50 },
+    { from:24,  to:35,  price:5.25 },
+    { from:36,  to:71,  price:4.75 },
+    { from:72,  to:143, price:4.25 },
+    { from:144, to:9999,price:3.25 },
+  ],
+  spTiers: [
+    { from:12,  to:36,  factor:30, base:[2.85,2.95,3.10,3.30,3.50,3.65] },
+    { from:37,  to:60,  factor:30, base:[2.35,2.45,2.60,2.70,2.80,2.90] },
+    { from:61,  to:144, factor:30, base:[2.00,2.05,2.20,2.40,2.55,2.65] },
+    { from:145, to:249, factor:30, base:[1.80,1.90,2.05,2.15,2.35,2.55] },
+    { from:250, to:600, factor:34, base:[1.20,1.25,1.45,1.50,1.65,2.50] },
+  ],
+};
+function qtGetActivePricing() {
+  try { const s = localStorage.getItem(QT_PRICING_KEY); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(QT_DEFAULT_PRICING)); }
+  catch(e) { return JSON.parse(JSON.stringify(QT_DEFAULT_PRICING)); }
+}
 function qtGetMargin(qty) {
-  if (qty < 36)   return 1.00;
-  if (qty <= 60)  return 0.85;
-  if (qty <= 144) return 0.65;
-  if (qty <= 249) return 0.55;
-  return 0.40;
+  const t = qtGetActivePricing().margins.find(r => qty >= r.from && qty <= r.to);
+  return t ? t.rate : 0.40;
 }
 function qtMarginLabel(qty) { return (qtGetMargin(qty)*100).toFixed(0)+'%'; }
-
-const QT_HT_SIZES = [
-  '1.5\u2033 \xd7 1.5\u2033','2.5\u2033 \xd7 2.5\u2033','4\u2033 \xd7 4\u2033',
-  '5.8\u2033 \xd7 8.3\u2033','11.7\u2033 \xd7 4.25\u2033','16.5\u2033 \xd7 5.85\u2033',
-  '8.3\u2033 \xd7 11.7\u2033','11.7\u2033 \xd7 11.7\u2033','11.7\u2033 \xd7 16.5\u2033'
-];
-const QT_HT_TIERS = [
-  { from:10,  to:19,  prices:[2.62,2.95,3.23,4.28,4.28,5.12,5.12,6.43,7.74] },
-  { from:20,  to:49,  prices:[2.18,2.45,2.69,3.57,3.57,4.27,4.27,5.37,6.46] },
-  { from:50,  to:99,  prices:[1.30,1.62,1.96,2.56,2.56,3.30,3.30,4.24,5.20] },
-  { from:100, to:199, prices:[0.87,1.11,1.45,1.77,1.77,2.27,2.27,2.95,3.63] },
-  { from:200, to:299, prices:[0.70,0.93,1.26,1.49,1.49,1.86,1.86,2.43,3.02] },
-  { from:300, to:499, prices:[0.56,0.78,1.10,1.33,1.33,1.71,1.71,2.24,2.78] },
-];
-const QT_EMB_TIERS = [
-  { from:1,   to:5,   price:7.00 },
-  { from:6,   to:23,  price:5.50 },
-  { from:24,  to:35,  price:5.25 },
-  { from:36,  to:71,  price:4.75 },
-  { from:72,  to:143, price:4.25 },
-  { from:144, to:500, price:3.25 },
-];
-const QT_SP_TIERS = [
-  { from:12,  to:36,  factor:30, base:[2.85,2.95,3.10,3.30,3.50,3.65] },
-  { from:37,  to:60,  factor:30, base:[2.35,2.45,2.60,2.70,2.80,2.90] },
-  { from:61,  to:144, factor:30, base:[2.00,2.05,2.20,2.40,2.55,2.65] },
-  { from:145, to:249, factor:30, base:[1.80,1.90,2.05,2.15,2.35,2.55] },
-  { from:250, to:600, factor:34, base:[1.20,1.25,1.45,1.50,1.65,2.50] },
-];
-function qtHtPrice(qty, si)  { const t = QT_HT_TIERS.find(r => qty >= r.from && qty <= r.to); return t ? t.prices[si] : null; }
-function qtEmbPrice(qty)     { const t = QT_EMB_TIERS.find(r => qty >= r.from && qty <= r.to); return t ? t.price : null; }
-function qtSpPrice(qty, ci)  { const t = QT_SP_TIERS.find(r => qty >= r.from && qty <= r.to); if (!t) return null; return t.base[ci] + t.factor*(ci+1)/qty; }
+function qtHtPrice(qty, si)  { const t = qtGetActivePricing().htTiers.find(r => qty >= r.from && qty <= r.to); return t ? t.prices[si] : null; }
+function qtEmbPrice(qty)     { const t = qtGetActivePricing().embTiers.find(r => qty >= r.from && qty <= r.to); return t ? t.price : null; }
+function qtSpPrice(qty, ci)  { const t = qtGetActivePricing().spTiers.find(r => qty >= r.from && qty <= r.to); if (!t) return null; return t.base[ci] + t.factor*(ci+1)/qty; }
 
 // ─── Quote Builder — Location panels ─────────────────────────────────────────
 const QT_LOC_KEYS   = ['front','back','rsleeve','lsleeve'];
@@ -3196,10 +3271,12 @@ function qtCalculate() {
   const subTotal       = totalPrintCost + apparelCost;
   const totalUnit      = subTotal * (1 + margin);
   const marginDollars  = (totalUnit - subTotal) * qty;
-  const ipuPerUnit     = totalUnit * QT_IPU_RATE;
+  const ipuPerUnit     = totalUnit * qtGetActivePricing().ipuRate;
   const ipuTotal       = ipuPerUnit * qty;
   const profit         = marginDollars - ipuTotal;
   const totalOrder     = totalUnit * qty;
+
+  const marginPerUnit = totalUnit - subTotal;
 
   document.getElementById('qt-r-total-unit').textContent  = qtFmt(totalUnit);
   document.getElementById('qt-r-total-order').textContent = qtFmtK(totalOrder);
@@ -3209,6 +3286,7 @@ function qtCalculate() {
   document.getElementById('qt-r-subtotal').textContent    = qtFmt(subTotal);
   document.getElementById('qt-r-margin-rate').textContent = qtMarginLabel(qty);
   document.getElementById('qt-r-margin').textContent      = qtFmtK(marginDollars);
+  document.getElementById('qt-r-margin-unit').textContent = qtFmt(marginPerUnit);
   document.getElementById('qt-r-ipu-total').textContent   = qtFmtK(ipuTotal);
   document.getElementById('qt-r-profit2').textContent     = qtFmtK(profit);
 
@@ -3378,7 +3456,143 @@ function qtDeleteQuote(e, id) {
   qtSaveAll(qtLoadAll().filter(x => x.id !== id)); qtRenderQuoteList();
 }
 function qtCloseModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── Pricing Settings ──────────────────────────────────────────
+let _qtActiveSettingsTab = 'general';
+function qtOpenSettings() {
+  qtRenderSettingsTabs();
+  document.getElementById('qt-settings-overlay').classList.add('open');
+}
+function qtCloseSettings() {
+  document.getElementById('qt-settings-overlay').classList.remove('open');
+}
+function qtSettingsTab(name) {
+  _qtActiveSettingsTab = name;
+  document.querySelectorAll('.qt-stab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.qt-spanel').forEach(p => p.classList.toggle('active', p.id === 'qt-sp-' + name));
+}
+function qtRenderSettingsTabs() {
+  const p = qtGetActivePricing();
+  document.getElementById('qt-s-ipu-rate').value = (p.ipuRate * 100).toFixed(2);
+  const mc = document.getElementById('qt-s-margins');
+  mc.innerHTML = p.margins.map((m, i) => `
+    <div class="qt-margin-row">
+      <label>Qty ${m.from}\u2013${m.to < 9999 ? m.to : '+'}</label>
+      <input class="qt-sinput" type="number" step="0.01" min="0" max="500" id="qt-s-mg-${i}" value="${(m.rate*100).toFixed(1)}"> %
+    </div>`).join('');
+  const htSizes = ['1.5" sq','2.5" sq','4" sq','5.8x8.3"','11.7x4.25"','16.5x5.85"','8.3x11.7"','11.7" sq','11.7x16.5"'];
+  const htHead = '<tr><th>Qty Range</th>' + htSizes.map(s => `<th>${s}</th>`).join('') + '</tr>';
+  const htRows = p.htTiers.map((t, ti) =>
+    `<tr><td class="qt-stier-label">${t.from}\u2013${t.to}</td>` +
+    t.prices.map((v, si) => `<td><input type="number" step="0.01" min="0" id="qt-s-ht-${ti}-${si}" value="${v.toFixed(2)}"></td>`).join('') +
+    '</tr>'
+  ).join('');
+  document.getElementById('qt-s-ht-table').innerHTML = htHead + htRows;
+  const embRows = p.embTiers.map((t, ti) =>
+    `<tr><td class="qt-stier-label">${t.from}\u2013${t.to < 9999 ? t.to : '+'}</td>` +
+    `<td><input type="number" step="0.01" min="0" id="qt-s-emb-${ti}" value="${t.price.toFixed(2)}"></td></tr>`
+  ).join('');
+  document.getElementById('qt-s-emb-table').innerHTML =
+    '<tr><th>Qty Range</th><th>Price / Location</th></tr>' + embRows;
+  const spCols = ['1 Color','2 Colors','3 Colors','4 Colors','5 Colors','6 Colors'];
+  const spHead = '<tr><th>Qty Range</th><th>Setup Factor</th>' + spCols.map(c => `<th>${c} Base</th>`).join('') + '</tr>';
+  const spRows = p.spTiers.map((t, ti) =>
+    `<tr><td class="qt-stier-label">${t.from}\u2013${t.to}</td>` +
+    `<td><input type="number" step="1" min="0" id="qt-s-sp-${ti}-factor" value="${t.factor}"></td>` +
+    t.base.map((v, ci) => `<td><input type="number" step="0.01" min="0" id="qt-s-sp-${ti}-${ci}" value="${v.toFixed(2)}"></td>`).join('') +
+    '</tr>'
+  ).join('');
+  document.getElementById('qt-s-sp-table').innerHTML = spHead + spRows;
+  qtSettingsTab(_qtActiveSettingsTab);
+}
+function qtSaveSettings() {
+  const p = qtGetActivePricing();
+  const ipuPct = parseFloat(document.getElementById('qt-s-ipu-rate').value);
+  if (isNaN(ipuPct)) { alert('Invalid IPU rate'); return; }
+  p.ipuRate = ipuPct / 100;
+  p.margins.forEach((m, i) => {
+    const v = parseFloat(document.getElementById(`qt-s-mg-${i}`)?.value);
+    if (!isNaN(v)) m.rate = v / 100;
+  });
+  p.htTiers.forEach((t, ti) => {
+    t.prices.forEach((_, si) => {
+      const v = parseFloat(document.getElementById(`qt-s-ht-${ti}-${si}`)?.value);
+      if (!isNaN(v)) t.prices[si] = v;
+    });
+  });
+  p.embTiers.forEach((t, ti) => {
+    const v = parseFloat(document.getElementById(`qt-s-emb-${ti}`)?.value);
+    if (!isNaN(v)) t.price = v;
+  });
+  p.spTiers.forEach((t, ti) => {
+    const fv = parseFloat(document.getElementById(`qt-s-sp-${ti}-factor`)?.value);
+    if (!isNaN(fv)) t.factor = fv;
+    t.base.forEach((_, ci) => {
+      const v = parseFloat(document.getElementById(`qt-s-sp-${ti}-${ci}`)?.value);
+      if (!isNaN(v)) t.base[ci] = v;
+    });
+  });
+  localStorage.setItem(QT_PRICING_KEY, JSON.stringify(p));
+  qtCloseSettings();
+  toast('Pricing saved!');
+}
+function qtResetPricing() {
+  if (!confirm('Reset all pricing to factory defaults?')) return;
+  localStorage.removeItem(QT_PRICING_KEY);
+  qtRenderSettingsTabs();
+  toast('Pricing reset to defaults.');
+}
+
 </script>
+
+<!-- ── Pricing Settings Modal ─────────────────────────────── -->
+<div class="qt-settings-overlay" id="qt-settings-overlay" onclick="if(event.target===this)qtCloseSettings()">
+  <div class="qt-settings-box">
+    <div class="qt-settings-header">
+      <div class="qt-settings-title">&#9881;&#65039; Pricing Settings</div>
+      <button class="qt-close-btn" onclick="qtCloseSettings()" title="Close">&times;</button>
+    </div>
+    <div class="qt-stab-bar">
+      <button class="qt-stab active" data-tab="general" onclick="qtSettingsTab('general')">General</button>
+      <button class="qt-stab" data-tab="ht" onclick="qtSettingsTab('ht')">Heat Transfer</button>
+      <button class="qt-stab" data-tab="emb" onclick="qtSettingsTab('emb')">Embroidery</button>
+      <button class="qt-stab" data-tab="sp" onclick="qtSettingsTab('sp')">Screen Print</button>
+    </div>
+    <div class="qt-settings-body">
+      <div class="qt-spanel active" id="qt-sp-general">
+        <div class="qt-sfield-label">IPU Rate (% of unit price)</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+          <input class="qt-sinput" type="number" step="0.01" min="0" max="100" id="qt-s-ipu-rate"> %
+        </div>
+        <div class="qt-sfield-label">Margin Tiers (% markup on cost)</div>
+        <div id="qt-s-margins"></div>
+      </div>
+      <div class="qt-spanel" id="qt-sp-ht">
+        <div class="qt-sfield-label">Price per location by qty &amp; transfer size</div>
+        <div style="overflow-x:auto;">
+          <table class="qt-stier-table" id="qt-s-ht-table"></table>
+        </div>
+      </div>
+      <div class="qt-spanel" id="qt-sp-emb">
+        <div class="qt-sfield-label">Price per location by qty</div>
+        <table class="qt-stier-table" id="qt-s-emb-table"></table>
+      </div>
+      <div class="qt-spanel" id="qt-sp-sp">
+        <div class="qt-sfield-label">Base price per color + per-color setup factor</div>
+        <div style="overflow-x:auto;">
+          <table class="qt-stier-table" id="qt-s-sp-table"></table>
+        </div>
+      </div>
+    </div>
+    <div class="qt-settings-footer">
+      <button class="qt-btn-outline" onclick="qtResetPricing()" style="color:#ef4444;border-color:#ef4444;">&#9851; Reset to Defaults</button>
+      <div style="display:flex;gap:10px;">
+        <button class="qt-btn-outline" onclick="qtCloseSettings()">Cancel</button>
+        <button class="qt-btn" onclick="qtSaveSettings()">Save Pricing</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── Catalog Reminder Banner ────────────────────────────── -->
 <div class="catalog-reminder" id="catalog-reminder">
@@ -3399,6 +3613,7 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
   <div class="qt-drawer-header">
     <div class="qt-drawer-title">4Z<span>Design</span> &nbsp;Quote Builder</div>
     <div class="qt-drawer-actions">
+      <button class="qt-hdr-btn" onclick="qtOpenSettings()">&#9881;&#65039; Settings</button>
       <button class="qt-hdr-btn" onclick="qtOpenLoadModal()">&#128194; Saved</button>
       <button class="qt-hdr-btn" onclick="qtResetAll()">+ New</button>
       <button class="qt-close-btn" onclick="qtClose()" title="Close">&times;</button>
@@ -3460,6 +3675,7 @@ function qtCloseModal(id) { document.getElementById(id).classList.remove('open')
           <div class="qt-res-row"><span class="rk">Sub Total / unit</span><span class="rv" id="qt-r-subtotal">—</span></div>
           <div class="qt-res-row"><span class="rk">Margin Rate</span><span class="rv" id="qt-r-margin-rate">—</span></div>
           <div class="qt-res-row"><span class="rk">Gross Margin $</span><span class="rv" id="qt-r-margin">—</span></div>
+          <div class="qt-res-row"><span class="rk">Margin / Item</span><span class="rv" id="qt-r-margin-unit">—</span></div>
           <div class="qt-res-row"><span class="rk">IPU Cost (10%)</span><span class="rv" id="qt-r-ipu-total">—</span></div>
           <div class="qt-res-row highlight span2"><span class="rk">Profit After IPU</span><span class="rv" id="qt-r-profit2">—</span></div>
         </div>
