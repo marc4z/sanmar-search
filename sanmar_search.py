@@ -19,8 +19,9 @@ import threading
 import time
 import requests
 import xml.etree.ElementTree as ET
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, render_template_string, Response
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urlparse
 import datetime
 
 app = Flask(__name__)
@@ -1079,6 +1080,32 @@ def api_product(product_id):
         return jsonify(result)
     else:
         return jsonify(result or {'error': 'Failed to fetch product data'}), 404
+
+
+@app.route('/api/image_proxy')
+def api_image_proxy():
+    """Fetch a SanMar product image server-side so the browser can embed it in the
+    quote PDF without hitting a CORS wall (used as the default garment photo)."""
+    url = request.args.get('url', '')
+    if not url:
+        return jsonify({'error': 'Missing url parameter'}), 400
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return jsonify({'error': 'Invalid url'}), 400
+    host = (parsed.hostname or '').lower()
+    # SanMar serves product media from a few different subdomains/CDNs (not all under
+    # sanmar.com), so we allow anything with "sanmar" in the host rather than an exact
+    # domain match — still far narrower than an open proxy.
+    if parsed.scheme not in ('http', 'https') or 'sanmar' not in host:
+        return jsonify({'error': 'URL host not allowed'}), 400
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch image: {e}'}), 502
+    content_type = resp.headers.get('Content-Type', 'image/jpeg')
+    return Response(resp.content, mimetype=content_type)
 
 
 @app.route('/api/inventory/<product_id>')
@@ -2891,7 +2918,7 @@ function renderProductCard(prod) {
         <div class="product-desc">${prod.description || 'No description available.'}</div>
         ${prod.basePrice ? `<div class="price-block"><span class="price-main">$${prod.basePrice}</span><span class="price-label">per unit</span></div>` : ''}
         ${priceTiersHtml}
-        ${prod.basePrice ? `<button class="add-quote-btn" data-qname="${(prod.productName||prod.productId||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qprice="${prod.basePrice}" data-qdesc="${(prod.description||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="addToQuote(this.dataset.qname,this.dataset.qprice,this.dataset.qdesc)">&#128203; Add to Quote</button>` : ''}
+        ${prod.basePrice ? `<button class="add-quote-btn" data-qname="${(prod.productName||prod.productId||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qprice="${prod.basePrice}" data-qdesc="${(prod.description||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qimg="${(defaultImageUrl||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="addToQuote(this.dataset.qname,this.dataset.qprice,this.dataset.qdesc,this.dataset.qimg)">&#128203; Add to Quote</button>` : ''}
         ${swatchesHtml}
       </div>
     </div>
@@ -3091,13 +3118,71 @@ function qtClose() {
 }
 
 // ─── Quote Builder — addToQuote entry point ───────────────────────────────────
-function addToQuote(name, price, description) {
+function addToQuote(name, price, description, imageUrl) {
   document.getElementById('qt-garment-desc').value      = name;
   document.getElementById('qt-apparel-cost').value      = parseFloat(price).toFixed(2);
   document.getElementById('qt-garment-full-desc').value = description || '';
+  window._qtDefaultImageUrl = imageUrl || '';
+  qtClearImageUpload();                    // drop any leftover manual upload from a prior item
+  if (imageUrl) qtShowImagePreview(imageUrl, false);
   qtClearResults(); qtOnQtyChange();
   qtOpen();
   setTimeout(() => document.getElementById('qt-qty').focus(), 350);
+}
+
+// ─── Quote Builder — Garment Image (upload or SanMar default) ────────────────
+window._qtUploadedImageB64 = null;
+window._qtDefaultImageUrl  = '';
+
+function qtShowImagePreview(dataUrlOrSrc, isCustom) {
+  const wrap = document.getElementById('qt-garment-image-preview');
+  const img  = document.getElementById('qt-garment-image-preview-img');
+  const hint = document.getElementById('qt-garment-image-hint');
+  img.src = dataUrlOrSrc;
+  wrap.style.display = 'flex';
+  hint.textContent = isCustom
+    ? 'Custom image will be used in the PDF instead of the SanMar photo.'
+    : 'Using the SanMar product photo for the PDF.';
+}
+
+function qtHandleImageUpload(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      // Downscale large uploads so the PDF stays small and localStorage doesn't bloat.
+      const maxDim = 900;
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      window._qtUploadedImageB64 = canvas.toDataURL('image/jpeg', 0.88);
+      qtShowImagePreview(window._qtUploadedImageB64, true);
+      qtClearResults();
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function qtClearImageUpload() {
+  window._qtUploadedImageB64 = null;
+  const fileInput = document.getElementById('qt-garment-image');
+  if (fileInput) fileInput.value = '';
+  const wrap = document.getElementById('qt-garment-image-preview');
+  const hint = document.getElementById('qt-garment-image-hint');
+  if (wrap) wrap.style.display = 'none';
+  if (hint) hint.textContent = window._qtDefaultImageUrl
+    ? 'No custom image uploaded — the SanMar product photo will be used in the PDF.'
+    : 'No image uploaded — the SanMar product photo will be used in the PDF if one is available.';
+  qtClearResults();
 }
 
 // ─── Quote Builder — Pricing (dynamic, editable via Settings) ────────────────
@@ -3332,7 +3417,7 @@ function qtCalculate() {
     `<div class="qt-loc-line"><span class="lk">${a.locLabel}</span><span class="lv">${a.label} — ${qtFmt(a.price)}/unit</span></div>`
   ).join('');
 
-  const result = { totalUnit, totalOrder, subTotal, marginDollars, ipuTotal, profit, qty, apparelCost, clientName, garmentDesc, garmentFullDesc, active, margin, marginOverridden, decorationDesc };
+  const result = { totalUnit, totalOrder, subTotal, marginDollars, ipuTotal, profit, qty, apparelCost, clientName, garmentDesc, garmentFullDesc, active, margin, marginOverridden, decorationDesc, garmentImageUrl: window._qtDefaultImageUrl || '', garmentImageUploaded: !!window._qtUploadedImageB64 };
   window._qtLastResult = result;
   window._qtQuoteHtml  = qtBuildQuoteHtml(result);
   qtRenderQuotePreview(window._qtQuoteHtml);
@@ -3386,7 +3471,30 @@ const QT_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4QAAADyCAYAA
 const QT_LOGO_ASPECT = 242/900; // height/width of the source asset
 
 // ─── Quote Builder — PDF Generation ──────────────────────────────────────────
-function qtGeneratePdf(r) {
+// Resolve the image to embed in the PDF: a manually uploaded image wins; otherwise fall
+// back to the SanMar product photo (fetched through our own server to dodge CORS).
+async function qtGetGarmentImageDataUrl(r) {
+  if (window._qtUploadedImageB64) return window._qtUploadedImageB64;
+  if (r.garmentImageUrl) {
+    try {
+      const resp = await fetch('/api/image_proxy?url=' + encodeURIComponent(r.garmentImageUrl));
+      if (!resp.ok) throw new Error('Image proxy returned ' + resp.status);
+      const blob = await resp.blob();
+      return await new Promise((resolve, reject) => {
+        const fr = new FileReader();
+        fr.onload  = () => resolve(fr.result);
+        fr.onerror = () => reject(new Error('Could not read image data'));
+        fr.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.error('Could not load the SanMar product image for the PDF', e);
+      return null;
+    }
+  }
+  return null;
+}
+
+async function qtGeneratePdf(r) {
   if (!window.jspdf || !window.jspdf.jsPDF) { alert('PDF library did not load — check your internet connection and try again.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
@@ -3434,6 +3542,22 @@ function qtGeneratePdf(r) {
     const gLines = doc.splitTextToSize(r.garmentFullDesc, pageW - margin * 2 - 8);
     doc.text(gLines, margin, y);
     y += gLines.length * 12 + 4;
+  }
+
+  const garmentImgDataUrl = await qtGetGarmentImageDataUrl(r);
+  if (garmentImgDataUrl) {
+    try {
+      const props = doc.getImageProperties(garmentImgDataUrl);
+      const maxW = 170, maxH = 170;
+      let iw = maxW, ih = maxW * (props.height / props.width);
+      if (ih > maxH) { ih = maxH; iw = maxH * (props.width / props.height); }
+      const imgX = margin + ((pageW - margin * 2) - iw) / 2;
+      y += 10;
+      doc.setDrawColor(225); doc.setLineWidth(0.75);
+      doc.rect(imgX - 2, y - 2, iw + 4, ih + 4);
+      doc.addImage(garmentImgDataUrl, props.fileType, imgX, y, iw, ih);
+      y += ih + 20;
+    } catch (e) { console.error('Could not embed the garment image in the PDF', e); }
   }
 
   y += 8;
@@ -3498,11 +3622,11 @@ function qtGeneratePdf(r) {
 
 // ─── Quote Builder — Copy / Edit ─────────────────────────────────────────────
 function qtFlash() { const f = document.getElementById('qt-copy-flash'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),2000); }
-function qtOpenEmail() {
+async function qtOpenEmail() {
   const r = window._qtLastResult; if (!r) return;
   const attachPdf = document.getElementById('qt-attach-pdf').checked;
   if (attachPdf) {
-    try { qtGeneratePdf(r); } catch (e) { console.error(e); alert('Could not generate the PDF: ' + e.message); }
+    try { await qtGeneratePdf(r); } catch (e) { console.error(e); alert('Could not generate the PDF: ' + e.message); }
   }
   const subject = encodeURIComponent('Quote — ' + r.garmentDesc + ' x' + r.qty);
   const body    = encodeURIComponent(
@@ -3545,6 +3669,8 @@ function qtResetAll() {
   ['qt-apparel-cost','qt-qty','qt-client-name','qt-garment-desc','qt-garment-full-desc','qt-margin-override','qt-decoration-desc'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('qt-attach-pdf').checked = false;
   document.getElementById('qt-margin-hint').textContent = '';
+  window._qtDefaultImageUrl = '';
+  qtClearImageUpload();
   qtClearResults(); qtClearAlerts();
   window._qtLastResult = null; window._qtQuoteHtml = '';
 }
@@ -3574,6 +3700,8 @@ function qtSaveQuote() {
       apparelCost: r.apparelCost, qty: r.qty,
       marginOverride: document.getElementById('qt-margin-override').value,
       decorationDesc: r.decorationDesc || '',
+      garmentImageUrl: r.garmentImageUrl || '',
+      uploadedImageB64: window._qtUploadedImageB64 || '',
       locState: {...qtLocState},
       locSelects: Object.fromEntries(QT_LOC_KEYS.flatMap(k => [
         [`qt-${k}-ht-size`,   document.getElementById(`qt-${k}-ht-size`).value],
@@ -3611,6 +3739,13 @@ function qtLoadQuote(id) {
   document.getElementById('qt-qty').value           = fs.qty;
   document.getElementById('qt-margin-override').value = fs.marginOverride || '';
   document.getElementById('qt-decoration-desc').value = fs.decorationDesc || '';
+  window._qtDefaultImageUrl = fs.garmentImageUrl || '';
+  if (fs.uploadedImageB64) {
+    window._qtUploadedImageB64 = fs.uploadedImageB64;
+    qtShowImagePreview(fs.uploadedImageB64, true);
+  } else if (fs.garmentImageUrl) {
+    qtShowImagePreview(fs.garmentImageUrl, false);
+  }
   qtOnQtyChange();
   QT_LOC_KEYS.forEach(k => {
     if (fs.locState && fs.locState[k]) qtSetLocType(k, fs.locState[k]);
@@ -3847,6 +3982,19 @@ function qtResetPricing() {
         <div class="qt-form-group">
           <label for="qt-garment-full-desc">Garment Description <span style="font-weight:400;color:#94a3b8;">(auto-filled from SanMar — edit if needed)</span></label>
           <textarea class="qt-input" id="qt-garment-full-desc" rows="2" placeholder="Pulled automatically when you add a product from search — type your own if this quote wasn't started from a product page." oninput="qtClearResults()" style="resize:vertical;min-height:44px;font-family:inherit;"></textarea>
+        </div>
+      </div>
+      <div class="qt-form-row" style="grid-template-columns:1fr;">
+        <div class="qt-form-group">
+          <label for="qt-garment-image">Garment Image <span style="font-weight:400;color:#94a3b8;">(optional — used in the PDF)</span></label>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="file" id="qt-garment-image" accept="image/png,image/jpeg,image/webp" onchange="qtHandleImageUpload(event)" style="font-size:.8rem;">
+            <div id="qt-garment-image-preview" style="display:none;align-items:center;gap:8px;">
+              <img id="qt-garment-image-preview-img" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1.5px solid #e2e8f0;">
+              <button type="button" class="qt-btn-outline" style="padding:4px 10px;font-size:.72rem;flex:none;" onclick="qtClearImageUpload()">Remove</button>
+            </div>
+          </div>
+          <div class="qt-hint" id="qt-garment-image-hint">No image uploaded — the SanMar product photo will be used in the PDF if one is available.</div>
         </div>
       </div>
       <div class="qt-form-row" style="grid-template-columns:1fr;">
