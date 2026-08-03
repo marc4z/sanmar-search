@@ -2403,8 +2403,9 @@ function sortBrowseResults() {
     const brand = p.productBrand ? `<div style="font-size:11px;color:var(--text-light);margin-top:3px;">${p.productBrand}</div>` : '';
     const price = p.basePrice ? `<div style="font-size:14px;font-weight:700;color:#16a34a;margin-top:4px;">$${p.basePrice}</div>` : '';
     const safeName = (name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    const safeDesc = (p.description||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     const addBtn = p.basePrice
-      ? `<button class="add-quote-btn-sm" data-qname="${safeName}" data-qprice="${p.basePrice}" onclick="event.stopPropagation();addToQuote(this.dataset.qname,this.dataset.qprice)">+ Quote</button>`
+      ? `<button class="add-quote-btn-sm" data-qname="${safeName}" data-qprice="${p.basePrice}" data-qdesc="${safeDesc}" onclick="event.stopPropagation();addToQuote(this.dataset.qname,this.dataset.qprice,this.dataset.qdesc)">+ Quote</button>`
       : '';
     html += `<div class="keyword-result-card" onclick="loadProduct('${p.productId}')" style="text-align:left;padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:start;">
@@ -2890,7 +2891,7 @@ function renderProductCard(prod) {
         <div class="product-desc">${prod.description || 'No description available.'}</div>
         ${prod.basePrice ? `<div class="price-block"><span class="price-main">$${prod.basePrice}</span><span class="price-label">per unit</span></div>` : ''}
         ${priceTiersHtml}
-        ${prod.basePrice ? `<button class="add-quote-btn" data-qname="${(prod.productName||prod.productId||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qprice="${prod.basePrice}" onclick="addToQuote(this.dataset.qname,this.dataset.qprice)">&#128203; Add to Quote</button>` : ''}
+        ${prod.basePrice ? `<button class="add-quote-btn" data-qname="${(prod.productName||prod.productId||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-qprice="${prod.basePrice}" data-qdesc="${(prod.description||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="addToQuote(this.dataset.qname,this.dataset.qprice,this.dataset.qdesc)">&#128203; Add to Quote</button>` : ''}
         ${swatchesHtml}
       </div>
     </div>
@@ -3090,9 +3091,10 @@ function qtClose() {
 }
 
 // ─── Quote Builder — addToQuote entry point ───────────────────────────────────
-function addToQuote(name, price) {
-  document.getElementById('qt-garment-desc').value  = name;
-  document.getElementById('qt-apparel-cost').value  = parseFloat(price).toFixed(2);
+function addToQuote(name, price, description) {
+  document.getElementById('qt-garment-desc').value      = name;
+  document.getElementById('qt-apparel-cost').value      = parseFloat(price).toFixed(2);
+  document.getElementById('qt-garment-full-desc').value = description || '';
   qtClearResults(); qtOnQtyChange();
   qtOpen();
   setTimeout(() => document.getElementById('qt-qty').focus(), 350);
@@ -3843,8 +3845,8 @@ function qtResetPricing() {
       </div>
       <div class="qt-form-row" style="grid-template-columns:1fr;">
         <div class="qt-form-group">
-          <label for="qt-garment-full-desc">Garment Description <span style="font-weight:400;color:#94a3b8;">(optional — shown on the quote &amp; PDF)</span></label>
-          <textarea class="qt-input" id="qt-garment-full-desc" rows="2" placeholder="e.g. 100% ringspun cotton tee, unisex fit, Ash Grey, sizes S–3XL" oninput="qtClearResults()" style="resize:vertical;min-height:44px;font-family:inherit;"></textarea>
+          <label for="qt-garment-full-desc">Garment Description <span style="font-weight:400;color:#94a3b8;">(auto-filled from SanMar — edit if needed)</span></label>
+          <textarea class="qt-input" id="qt-garment-full-desc" rows="2" placeholder="Pulled automatically when you add a product from search — type your own if this quote wasn't started from a product page." oninput="qtClearResults()" style="resize:vertical;min-height:44px;font-family:inherit;"></textarea>
         </div>
       </div>
       <div class="qt-form-row" style="grid-template-columns:1fr;">
