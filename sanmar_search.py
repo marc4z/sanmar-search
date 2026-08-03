@@ -3188,6 +3188,13 @@ function qtBuildPanel(key) {
         <div class="qt-hint">Setup cost split across qty.</div>
       </div>
     </div>
+    <div class="qt-loc-opts hidden" id="qt-opts-${key}-desc">
+      <div class="qt-form-group">
+        <label>Description <span style="font-weight:400;color:#94a3b8;">(optional)</span></label>
+        <input class="qt-input" type="text" id="qt-${key}-desc-override" placeholder="e.g. Left Chest Logo" oninput="qtClearResults()">
+        <div class="qt-hint">Leave blank to use the price-based description (e.g. "Heat Transfer — 4&quot; x 4&quot;") on the quote.</div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -3212,6 +3219,8 @@ function qtSetLocType(key, type) {
     const el = document.getElementById(`qt-opts-${key}-${t}`);
     if (el) el.classList.toggle('hidden', type !== t);
   });
+  const descWrap = document.getElementById(`qt-opts-${key}-desc`);
+  if (descWrap) descWrap.classList.toggle('hidden', type === 'none');
   qtClearResults();
 }
 
@@ -3252,6 +3261,7 @@ function qtCalculate() {
   const qty         = parseInt(document.getElementById('qt-qty').value);
   const clientName  = document.getElementById('qt-client-name').value.trim() || '[Client Name]';
   const garmentDesc = document.getElementById('qt-garment-desc').value.trim() || '[Garment]';
+  const garmentFullDesc = document.getElementById('qt-garment-full-desc').value.trim();
   const decorationDesc = document.getElementById('qt-decoration-desc').value.trim();
 
   if (isNaN(apparelCost) || apparelCost < 0) { qtShowAlert('err','Enter a valid apparel cost.'); return; }
@@ -3288,7 +3298,9 @@ function qtCalculate() {
       if (price === null) { qtShowAlert('err', `No Screen Printing pricing for qty ${qty}.`); return; }
       label = `Screen Printing — ${ci+1} color${ci>0?'s':''}`;
     }
-    active.push({ key, locLabel: QT_LOC_LABELS[key], price, label });
+    const descOverrideEl = document.getElementById(`qt-${key}-desc-override`);
+    const descOverride   = descOverrideEl ? descOverrideEl.value.trim() : '';
+    active.push({ key, locLabel: QT_LOC_LABELS[key], price, label: descOverride || label, autoLabel: label, descOverridden: !!descOverride });
   }
 
   if (active.length === 0) { qtShowAlert('err', 'Select at least one decoration location.'); return; }
@@ -3318,7 +3330,7 @@ function qtCalculate() {
     `<div class="qt-loc-line"><span class="lk">${a.locLabel}</span><span class="lv">${a.label} — ${qtFmt(a.price)}/unit</span></div>`
   ).join('');
 
-  const result = { totalUnit, totalOrder, subTotal, marginDollars, ipuTotal, profit, qty, apparelCost, clientName, garmentDesc, active, margin, marginOverridden, decorationDesc };
+  const result = { totalUnit, totalOrder, subTotal, marginDollars, ipuTotal, profit, qty, apparelCost, clientName, garmentDesc, garmentFullDesc, active, margin, marginOverridden, decorationDesc };
   window._qtLastResult = result;
   window._qtQuoteHtml  = qtBuildQuoteHtml(result);
   qtRenderQuotePreview(window._qtQuoteHtml);
@@ -3345,6 +3357,7 @@ function qtBuildQuoteHtml(r) {
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:2px solid #1a2744;border-bottom:2px solid #1a2744;margin:20px 0;">
   <tr><td colspan="2" style="padding:14px 4px 10px;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#1a2744;">QUOTE SUMMARY</td></tr>
   <tr><td style="padding:5px 4px;color:#666;width:175px;">Garment:</td><td style="padding:5px 4px;font-weight:600;">${qtEscHtml(r.garmentDesc)}</td></tr>
+  ${r.garmentFullDesc ? `<tr><td></td><td style="padding:0 4px 5px;font-size:12.5px;color:#777;">${qtEscHtml(r.garmentFullDesc)}</td></tr>` : ''}
   <tr><td style="padding:5px 4px;color:#666;vertical-align:top;">Decoration:</td><td style="padding:5px 4px;font-weight:600;">${r.active.length===1?qtEscHtml(r.active[0].label):''}</td></tr>
   ${r.active.length>1?decorRows:''}
   <tr><td style="padding:5px 4px;color:#666;">Quantity:</td><td style="padding:5px 4px;font-weight:600;">${r.qty} pieces</td></tr>
@@ -3413,6 +3426,13 @@ function qtGeneratePdf(r) {
     doc.text(String(val), margin + 150, y);
     y += 18;
   });
+
+  if (r.garmentFullDesc) {
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(110);
+    const gLines = doc.splitTextToSize(r.garmentFullDesc, pageW - margin * 2 - 8);
+    doc.text(gLines, margin, y);
+    y += gLines.length * 12 + 4;
+  }
 
   y += 8;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(26, 39, 68);
@@ -3490,6 +3510,7 @@ function qtOpenEmail() {
     'QUOTE SUMMARY\n' +
     '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n' +
     'Garment:           ' + r.garmentDesc + '\n' +
+    (r.garmentFullDesc ? '                   ' + r.garmentFullDesc + '\n' : '') +
     'Decoration:\n' + r.active.map(a => '  ' + a.locLabel + ': ' + a.label).join('\n') + '\n' +
     'Quantity:          ' + r.qty + ' pieces\n' +
     'Price per garment: ' + qtFmt(r.totalUnit) + '\n' +
@@ -3506,7 +3527,7 @@ function qtOpenEmail() {
 }
 function qtCopyPlainText() {
   const r = window._qtLastResult; if (!r) return;
-  const text = `Hi ${r.clientName},\n\nThanks for reaching out—here's a first pass on your quote:\n\n──────────────────────────────\nQUOTE SUMMARY\n──────────────────────────────\nGarment:           ${r.garmentDesc}\nDecoration:\n${r.active.map(a=>'  '+a.locLabel+': '+a.label).join('\n')}\nQuantity:          ${r.qty} pieces\nPrice per garment: ${qtFmt(r.totalUnit)}\nTotal:             ${qtFmt(r.totalOrder)}\n──────────────────────────────\n\n${r.decorationDesc ? 'What’s included: ' + r.decorationDesc + '\n\n' : ''}This includes the decoration and is based on the quantity above.\n\nShipping and sales tax are not included and will be added once we finalize details.\n\nIf you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.\n\n— Marc\n4Z Design\nmarc@4zdesign.com`;
+  const text = `Hi ${r.clientName},\n\nThanks for reaching out—here's a first pass on your quote:\n\n──────────────────────────────\nQUOTE SUMMARY\n──────────────────────────────\nGarment:           ${r.garmentDesc}\n${r.garmentFullDesc ? '                   ' + r.garmentFullDesc + '\n' : ''}Decoration:\n${r.active.map(a=>'  '+a.locLabel+': '+a.label).join('\n')}\nQuantity:          ${r.qty} pieces\nPrice per garment: ${qtFmt(r.totalUnit)}\nTotal:             ${qtFmt(r.totalOrder)}\n──────────────────────────────\n\n${r.decorationDesc ? 'What’s included: ' + r.decorationDesc + '\n\n' : ''}This includes the decoration and is based on the quantity above.\n\nShipping and sales tax are not included and will be added once we finalize details.\n\nIf you want to tweak garment options, sizing, or quantities, I can adjust this quickly. Just let me know what direction you want to go.\n\n— Marc\n4Z Design\nmarc@4zdesign.com`;
   navigator.clipboard.writeText(text).then(qtFlash);
 }
 function qtOpenEditModal()  { document.getElementById('qt-edit-html-area').value = window._qtQuoteHtml||''; document.getElementById('qt-edit-modal').classList.add('open'); }
@@ -3514,8 +3535,12 @@ function qtApplyEditedHtml(){ window._qtQuoteHtml = document.getElementById('qt-
 
 // ─── Quote Builder — Reset ────────────────────────────────────────────────────
 function qtResetAll() {
-  QT_LOC_KEYS.forEach(k => qtSetLocType(k,'none'));
-  ['qt-apparel-cost','qt-qty','qt-client-name','qt-garment-desc','qt-margin-override','qt-decoration-desc'].forEach(id => document.getElementById(id).value = '');
+  QT_LOC_KEYS.forEach(k => {
+    qtSetLocType(k,'none');
+    const el = document.getElementById(`qt-${k}-desc-override`);
+    if (el) el.value = '';
+  });
+  ['qt-apparel-cost','qt-qty','qt-client-name','qt-garment-desc','qt-garment-full-desc','qt-margin-override','qt-decoration-desc'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('qt-attach-pdf').checked = false;
   document.getElementById('qt-margin-hint').textContent = '';
   qtClearResults(); qtClearAlerts();
@@ -3543,6 +3568,7 @@ function qtSaveQuote() {
     quoteHtml: window._qtQuoteHtml, result: r,
     formState: {
       clientName: r.clientName, garmentDesc: r.garmentDesc,
+      garmentFullDesc: r.garmentFullDesc || '',
       apparelCost: r.apparelCost, qty: r.qty,
       marginOverride: document.getElementById('qt-margin-override').value,
       decorationDesc: r.decorationDesc || '',
@@ -3550,6 +3576,7 @@ function qtSaveQuote() {
       locSelects: Object.fromEntries(QT_LOC_KEYS.flatMap(k => [
         [`qt-${k}-ht-size`,   document.getElementById(`qt-${k}-ht-size`).value],
         [`qt-${k}-sp-colors`, document.getElementById(`qt-${k}-sp-colors`).value],
+        [`qt-${k}-desc-override`, document.getElementById(`qt-${k}-desc-override`)?.value || ''],
       ]))
     }
   };
@@ -3577,6 +3604,7 @@ function qtLoadQuote(id) {
   const fs = q.formState;
   document.getElementById('qt-client-name').value  = fs.clientName||'';
   document.getElementById('qt-garment-desc').value  = fs.garmentDesc||'';
+  document.getElementById('qt-garment-full-desc').value = fs.garmentFullDesc || '';
   document.getElementById('qt-apparel-cost').value  = fs.apparelCost;
   document.getElementById('qt-qty').value           = fs.qty;
   document.getElementById('qt-margin-override').value = fs.marginOverride || '';
@@ -3585,10 +3613,12 @@ function qtLoadQuote(id) {
   QT_LOC_KEYS.forEach(k => {
     if (fs.locState && fs.locState[k]) qtSetLocType(k, fs.locState[k]);
     if (fs.locSelects) {
-      const htEl = document.getElementById(`qt-${k}-ht-size`);
-      const spEl = document.getElementById(`qt-${k}-sp-colors`);
+      const htEl   = document.getElementById(`qt-${k}-ht-size`);
+      const spEl   = document.getElementById(`qt-${k}-sp-colors`);
+      const descEl = document.getElementById(`qt-${k}-desc-override`);
       if (htEl && fs.locSelects[`qt-${k}-ht-size`])   htEl.value = fs.locSelects[`qt-${k}-ht-size`];
       if (spEl && fs.locSelects[`qt-${k}-sp-colors`])  spEl.value = fs.locSelects[`qt-${k}-sp-colors`];
+      if (descEl && fs.locSelects[`qt-${k}-desc-override`]) descEl.value = fs.locSelects[`qt-${k}-desc-override`];
     }
   });
   qtCloseModal('qt-load-modal');
@@ -3809,6 +3839,12 @@ function qtResetPricing() {
           <label for="qt-qty">Quantity</label>
           <input class="qt-input" type="number" id="qt-qty" min="1" step="1" placeholder="e.g. 50" oninput="qtOnQtyChange()">
           <div class="qt-hint" id="qt-margin-hint"></div>
+        </div>
+      </div>
+      <div class="qt-form-row" style="grid-template-columns:1fr;">
+        <div class="qt-form-group">
+          <label for="qt-garment-full-desc">Garment Description <span style="font-weight:400;color:#94a3b8;">(optional — shown on the quote &amp; PDF)</span></label>
+          <textarea class="qt-input" id="qt-garment-full-desc" rows="2" placeholder="e.g. 100% ringspun cotton tee, unisex fit, Ash Grey, sizes S–3XL" oninput="qtClearResults()" style="resize:vertical;min-height:44px;font-family:inherit;"></textarea>
         </div>
       </div>
       <div class="qt-form-row" style="grid-template-columns:1fr;">
